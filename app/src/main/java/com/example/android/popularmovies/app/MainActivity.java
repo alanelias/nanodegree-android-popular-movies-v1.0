@@ -13,7 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -80,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
+
+        public ArrayAdapter<String> mMoviesAdapter;
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -105,8 +112,56 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+            // Creating fake list of popular movies to test the adapter
+            String[] moviesArray = {
+                    "First Movie",
+                    "Second Hand Lions (2003)",
+                    "The Bucket List (2007)",
+                    "Man on Fire (2004)",
+                    "The Matrix (1999)",
+                    "Second Hand Lions (2003)",
+                    "The Bucket List (2007)",
+                    "Man on Fire (2004)","The Matrix (1999)",
+                    "Second Hand Lions (2003)",
+                    "The Bucket List (2007)",
+                    "Man on Fire (2004)","The Matrix (1999)",
+                    "Second Hand Lions (2003)",
+                    "The Bucket List (2007)",
+                    "Man on Fire (2004)","The Matrix (1999)",
+                    "Second Hand Lions (2003)",
+                    "The Bucket List (2007)",
+                    "Man on Fire (2004)","The Matrix (1999)",
+                    "Second Hand Lions (2003)",
+                    "The Bucket List (2007)",
+                    "Man on Fire (2004)",
+                    "Last Movie"
+            };
+
+            // converting the array of string to list
+            List<String> movieslist = new ArrayList<String>(Arrays.asList(moviesArray));
+
+            // ArrayAdapter will take the data from a the list and create the the ListView items
+            mMoviesAdapter = new ArrayAdapter<String>(
+                    // getting the current context
+                    getActivity(),
+                    // id of list item item layout
+                    R.layout.movie_list_row,
+                    // id of the text view to populate
+                    R.id.movie_row_title,
+                    // List of forecast status
+                    movieslist
+            );
+
+            // get a refrance to ListView
+            ListView listView = (ListView) rootView.findViewById(R.id.movieList);
+
+            // attach adapter to listview
+            listView.setAdapter(mMoviesAdapter);
+
+
+            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
