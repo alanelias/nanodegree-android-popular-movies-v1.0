@@ -21,6 +21,7 @@ package com.example.android.popularmovies.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,10 +29,14 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MoviesListAdapter extends BaseAdapter {
+
+    private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     public static final String HASH_MAP_KEY_ID = "id";
     public static final String HASH_MAP_KEY_TITLE = "title";
@@ -45,10 +50,12 @@ public class MoviesListAdapter extends BaseAdapter {
     private ArrayList<HashMap<String, String>> moviesData;
 
     private Activity activity;
+    private Context mContext;
     private static LayoutInflater inflater=null;
 
-    public MoviesListAdapter(ArrayList<HashMap<String, String>> moviesListData, Activity a) {
+    public MoviesListAdapter(ArrayList<HashMap<String, String>> moviesListData, Activity a, Context context) {
         activity = a;
+        mContext = context;
         moviesData = moviesListData;
         inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -86,11 +93,14 @@ public class MoviesListAdapter extends BaseAdapter {
         TextView movieDesciption = (TextView) convertView.findViewById(R.id.movie_row_description); // description
         TextView movieRate = (TextView) convertView.findViewById(R.id.movie_row_rate); // rate
         TextView movieDate = (TextView) convertView.findViewById(R.id.movie_row_date); // movie date
-        ImageView thumb_image= (ImageView) convertView.findViewById(R.id.movie_row_image); // movie image
+        ImageView movieImage= (ImageView) convertView.findViewById(R.id.movie_row_image); // movie image
         movieTitle.setText(singleRow.get(HASH_MAP_KEY_TITLE));
         movieDesciption.setText(singleRow.get(HASH_MAP_KEY_DESCRIPTION));
         movieDate.setText(singleRow.get(HASH_MAP_KEY_DATE));
         movieRate.setText(singleRow.get(HASH_MAP_KEY_RATE));
+        String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_LIST_VIEW_IMG_SIZE + singleRow.get(HASH_MAP_KEY_IMAGE);
+        Log.i(LOG_TAG, ImgURL);
+        Picasso.with(mContext).load(ImgURL).into(movieImage);
         return convertView;
     }
 
