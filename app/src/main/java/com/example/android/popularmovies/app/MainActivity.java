@@ -1,3 +1,21 @@
+/*
+ *     Popular Movies | The app allow users to discover the most popular movies playing
+ *     Copyright (C) <2016>  <Alaa Elias>
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.example.android.popularmovies.app;
 
 import android.os.Bundle;
@@ -13,12 +31,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -86,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
-        public ArrayAdapter<String> mMoviesAdapter;
+        public MoviesListAdapter moviesListAdapter;
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -113,56 +131,27 @@ public class MainActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-            // Creating fake list of popular movies to test the adapter
-            String[] moviesArray = {
-                    "First Movie",
-                    "Second Hand Lions (2003)",
-                    "The Bucket List (2007)",
-                    "Man on Fire (2004)",
-                    "The Matrix (1999)",
-                    "Second Hand Lions (2003)",
-                    "The Bucket List (2007)",
-                    "Man on Fire (2004)","The Matrix (1999)",
-                    "Second Hand Lions (2003)",
-                    "The Bucket List (2007)",
-                    "Man on Fire (2004)","The Matrix (1999)",
-                    "Second Hand Lions (2003)",
-                    "The Bucket List (2007)",
-                    "Man on Fire (2004)","The Matrix (1999)",
-                    "Second Hand Lions (2003)",
-                    "The Bucket List (2007)",
-                    "Man on Fire (2004)","The Matrix (1999)",
-                    "Second Hand Lions (2003)",
-                    "The Bucket List (2007)",
-                    "Man on Fire (2004)",
-                    "Last Movie"
-            };
-
-            // converting the array of string to list
-            List<String> movieslist = new ArrayList<String>(Arrays.asList(moviesArray));
-
-            // ArrayAdapter will take the data from a the list and create the the ListView items
-            mMoviesAdapter = new ArrayAdapter<String>(
-                    // getting the current context
-                    getActivity(),
-                    // id of list item item layout
-                    R.layout.movie_list_row,
-                    // id of the text view to populate
-                    R.id.movie_row_title,
-                    // List of forecast status
-                    movieslist
-            );
+            // MoviesListAdapter will take the data from a the list and create the the ListView items
+            moviesListAdapter = new MoviesListAdapter(new ArrayList<HashMap<String, String>>(), getActivity());
 
             // get a refrance to ListView
-            ListView listView = (ListView) rootView.findViewById(R.id.movieList);
+            ListView listView = (ListView) rootView.findViewById(R.id.movies_list_view);
 
             // attach adapter to listview
-            listView.setAdapter(mMoviesAdapter);
+            listView.setAdapter(moviesListAdapter);
 
-
-            //TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
+        }
+
+        private void updateMovies() {
+            FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesListAdapter);
+            moviesTask.execute();
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            updateMovies();
         }
     }
 
