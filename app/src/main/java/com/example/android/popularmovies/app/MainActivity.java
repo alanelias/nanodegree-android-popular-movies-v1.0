@@ -26,11 +26,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -69,13 +71,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
 
+
+        mViewPager.setAdapter(mSectionsPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         // Attach the page change listener inside the activity
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             // This method will be invoked when a new page becomes selected.
             @Override
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 // Code goes here
+                Log.i(LOG_TAG, String.valueOf(position) + " - " + String.valueOf(positionOffset) + " - " + String.valueOf(positionOffsetPixels));
             }
 
             // Called when the scroll state changes:
@@ -160,7 +164,24 @@ public class MainActivity extends AppCompatActivity {
             moviesListAdapter = new MoviesListAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
 
             // get a refrance to ListView
-            ListView listView = (ListView) rootView.findViewById(R.id.movies_list_view);
+            final ListView listView = (ListView) rootView.findViewById(R.id.movies_list_view);
+
+            listView.setOnScrollListener(new AbsListView.OnScrollListener(){
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                }
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+                    if(scrollState == 0) {
+                        if(view.getCount() - view.getLastVisiblePosition() < 3 ){
+                            if(moviesListAdapter.getNextPage()==moviesListAdapter.getCurrentPage()) {
+                                moviesListAdapter.setNextPage();
+                                updateMovies(moviesListAdapter.getNextPage());
+                            }
+                        }
+                    }
+                }
+            });
+
 
             // attach adapter to listview
             listView.setAdapter(moviesListAdapter);
@@ -168,15 +189,15 @@ public class MainActivity extends AppCompatActivity {
             return rootView;
         }
 
-        private void updateMovies() {
+        private void updateMovies(int page) {
             FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesListAdapter);
-            moviesTask.execute();
+            moviesTask.execute(String.valueOf(page));
         }
 
         @Override
         public void onStart() {
             super.onStart();
-            updateMovies();
+            updateMovies(1);
         }
     }
 
@@ -184,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter  {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -214,5 +235,8 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
+
     }
+
+
 }
