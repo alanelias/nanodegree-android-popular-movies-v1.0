@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/movie_row_image"
             android:layout_width="50dip"
-            android:layout_height="50dip"
+            android:layout_height="60dip"
             android:src="@android:drawable/sym_def_app_icon"
             android:scaleType="matrix" />
     </LinearLayout>
@@ -25,52 +25,66 @@
         android:id="@+id/movie_row_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/movie_row_thumbnail"
-        android:layout_toLeftOf="@+id/movie_row_rate"
-        android:layout_toRightOf="@+id/movie_row_thumbnail"
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Epsum factorial non deposit quid pro"
         android:textColor="#040404"
         android:textSize="15dip"
         android:textStyle="bold"
-        android:typeface="sans" />
+        android:typeface="sans"
+        android:layout_alignTop="@+id/movie_row_thumbnail"
+        android:layout_toRightOf="@+id/movie_row_thumbnail"
+        android:layout_alignRight="@+id/movie_row_description"
+        android:layout_alignEnd="@+id/movie_row_description" />
 
     <TextView
         android:id="@+id/movie_row_description"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/movie_row_title"
-        android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/movie_row_thumbnail"
         android:ellipsize="end"
-        android:singleLine="true"
         android:text="Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. Souvlaki ignitus carborundum e pluribus unum. Defacto lingo est igpay atinlay. Marquee selectus non provisio incongruous feline nolo contendre. Gratuitous octopus niacin, sodium glutimate. Quote meon an estimate et non interruptus stadium.  "
         android:textColor="#343434"
-        android:textSize="10dip" />
+        android:textSize="10dip"
+        android:lines="2"
+        android:gravity="left"
+        android:layout_above="@+id/movie_row_date"
+        android:maxLines="2"
+        android:layout_toEndOf="@id/movie_row_thumbnail" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/movie_rating_bar"
+        android:numStars="5"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_below="@+id/movie_row_description"
+        android:layout_toRightOf="@+id/movie_row_thumbnail"
+        android:layout_toEndOf="@+id/movie_row_thumbnail"
+        android:stepSize="0.5" />
 
     <TextView
         android:id="@+id/movie_row_rate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="false"
         android:gravity="right"
         android:text="4.2"
         android:textColor="#3399ff"
         android:textSize="13sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_below="@+id/movie_row_description"
+        android:layout_toEndOf="@id/movie_rating_bar"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp" />
 
     <TextView
         android:id="@+id/movie_row_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/movie_row_thumbnail"
         android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="false"
         android:layout_alignParentRight="true"
-        android:layout_alignRight="@+id/movie_row_description"
         android:layout_alignWithParentIfMissing="false"
         android:layout_centerHorizontal="false"
         android:layout_centerInParent="false"
@@ -79,6 +93,8 @@
         android:text="April 2016"
         android:textColor="#3399ff"
         android:textSize="12sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/movie_row_thumbnail" />
 
 </RelativeLayout>
