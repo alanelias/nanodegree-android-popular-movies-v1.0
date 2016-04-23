@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -38,6 +39,8 @@ public class MoviesListAdapter extends BaseAdapter {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
+   
+
     public static final String HASH_MAP_KEY_ID = "id";
     public static final String HASH_MAP_KEY_TITLE = "title";
     public static final String HASH_MAP_KEY_DESCRIPTION = "description";
@@ -46,6 +49,10 @@ public class MoviesListAdapter extends BaseAdapter {
     public static final String HASH_MAP_KEY_IMAGE = "image";
     public static final String HASH_MAP_KEY_ADULT = "adult";
     public static final String HASH_MAP_KEY_LANG = "lang";
+
+    private int currentPage = 1;
+    private int nextPage = 1;
+
 
     private ArrayList<HashMap<String, String>> moviesData;
 
@@ -57,6 +64,7 @@ public class MoviesListAdapter extends BaseAdapter {
         activity = a;
         mContext = context;
         moviesData = moviesListData;
+        currentPage = nextPage = 1;
         inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -94,21 +102,50 @@ public class MoviesListAdapter extends BaseAdapter {
         TextView movieRate = (TextView) convertView.findViewById(R.id.movie_row_rate); // rate
         TextView movieDate = (TextView) convertView.findViewById(R.id.movie_row_date); // movie date
         ImageView movieImage= (ImageView) convertView.findViewById(R.id.movie_row_image); // movie image
+        RatingBar movieRatingBar = (RatingBar) convertView.findViewById(R.id.movie_rating_bar); // movie image
+
         movieTitle.setText(singleRow.get(HASH_MAP_KEY_TITLE));
         movieDesciption.setText(singleRow.get(HASH_MAP_KEY_DESCRIPTION));
         movieDate.setText(singleRow.get(HASH_MAP_KEY_DATE));
-        movieRate.setText(singleRow.get(HASH_MAP_KEY_RATE));
+
+        String ratingValue = singleRow.get(HASH_MAP_KEY_RATE);
+        movieRatingBar.setRating(Float.valueOf(ratingValue));
+        movieRate.setText(ratingValue);
+
         String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_LIST_VIEW_IMG_SIZE + singleRow.get(HASH_MAP_KEY_IMAGE);
         Log.i(LOG_TAG, ImgURL);
         Picasso.with(mContext).load(ImgURL).into(movieImage);
         return convertView;
     }
 
+
+
     public void clearAdapter(){
         moviesData.clear();
+        currentPage = nextPage = 1;
+    }
+
+    public int getCurrentPage(){
+        return currentPage;
+    }
+
+    public void setCurrentPage(int cPage){
+        currentPage = cPage;
+    }
+
+    public int getNextPage(){
+        return nextPage;
+    }
+
+    public void setNextPage(int nPage){
+        nextPage = nPage;
+    }
+    public void setNextPage(){
+        nextPage = currentPage + 1;
     }
 
     public void appendMovie(HashMap<String, String> newMovieData){
         moviesData.add(newMovieData);
     }
+
 }
