@@ -97,20 +97,27 @@ public class MoviesListAdapter extends BaseAdapter {
 
 
 
-        TextView movieTitle = (TextView) convertView.findViewById(R.id.movie_row_title); // title
-        TextView movieDesciption = (TextView) convertView.findViewById(R.id.movie_row_description); // description
-        TextView movieRate = (TextView) convertView.findViewById(R.id.movie_row_rate); // rate
+        TextView movieTitle = (TextView) convertView.findViewById(R.id.movie_row_title); // movie title
+        TextView movieDesciption = (TextView) convertView.findViewById(R.id.movie_row_description); // movie description
+
         TextView movieDate = (TextView) convertView.findViewById(R.id.movie_row_date); // movie date
+
         ImageView movieImage= (ImageView) convertView.findViewById(R.id.movie_row_image); // movie image
-        RatingBar movieRatingBar = (RatingBar) convertView.findViewById(R.id.movie_rating_bar); // movie image
+        TextView movieAdult = (TextView) convertView.findViewById(R.id.movie_row_adult); // movie adult status
+
+        RatingBar movieRatingBar = (RatingBar) convertView.findViewById(R.id.movie_rating_bar); // movie rating bar
+        TextView movieRate = (TextView) convertView.findViewById(R.id.movie_row_rate); // movie rate
 
         movieTitle.setText(singleRow.get(HASH_MAP_KEY_TITLE));
         movieDesciption.setText(singleRow.get(HASH_MAP_KEY_DESCRIPTION));
+
         movieDate.setText(singleRow.get(HASH_MAP_KEY_DATE));
 
         String ratingValue = singleRow.get(HASH_MAP_KEY_RATE);
         movieRatingBar.setRating(Float.valueOf(ratingValue));
         movieRate.setText(ratingValue);
+
+        movieAdult.setText(singleRow.get(HASH_MAP_KEY_ADULT));
 
         String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_LIST_VIEW_IMG_SIZE + singleRow.get(HASH_MAP_KEY_IMAGE);
         Log.i(LOG_TAG, ImgURL);

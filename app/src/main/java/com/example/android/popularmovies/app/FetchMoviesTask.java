@@ -91,7 +91,12 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
 
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_RATE, convertRateFrom10To5Stars(movieRow.getLong(OPM_RATE)));
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_ADULT, movieRow.getString(OPM_ADULT));
+
+            String movieAges = mContext.getString(R.string.movie_adult_all);
+            if(movieRow.getString(OPM_ADULT).equalsIgnoreCase("true")) {
+                movieAges = mContext.getString(R.string.movie_adult_plus_18);
+            }
+            mItem.put(MoviesListAdapter.HASH_MAP_KEY_ADULT, movieAges);
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_LANG, movieRow.getString(OPM_LANG));
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_IMAGE, movieRow.getString(OPM_IMG));
             moviesListAdapter.appendMovie(mItem);
