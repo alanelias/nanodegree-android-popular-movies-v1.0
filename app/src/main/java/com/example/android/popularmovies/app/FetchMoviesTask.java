@@ -33,6 +33,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
@@ -50,7 +53,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         Log.i(LOG_TAG, "FetchMoviesTask");
     }
 
-    protected void appendMoviesDataFromJsonToAdapter(String jsonString) throws JSONException {
+    protected boolean appendMoviesDataFromJsonToAdapter(String jsonString) throws JSONException {
         // These are the names of the JSON objects that need to be extracted.
         final String OPM_LIST = "results";
         final String OPM_ID = "id";
@@ -61,8 +64,16 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         final String OPM_LANG = "original_language";
         final String OPM_ADULT = "adult";
         final String OPM_IMG = "poster_path";
+        final String OPM_PAGE = "page";
 
         JSONObject moviesJson = new JSONObject(jsonString);
+
+        int page = Integer.valueOf(moviesJson.getString(OPM_PAGE));
+
+        // verify response page number and update the adapter page number
+        if(page > 0){
+            moviesListAdapter.setCurrentPage(page);
+        } else return false;
 
         JSONArray moviesArray = moviesJson.getJSONArray(OPM_LIST);
 
@@ -75,33 +86,66 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_ID, movieRow.getString(OPM_ID));
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_TITLE, movieRow.getString(OPM_TITLE));
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_DESCRIPTION, movieRow.getString(OPM_DESCRIPTION));
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_DATE, movieRow.getString(OPM_DATE));
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_RATE, movieRow.getString(OPM_RATE));
+            mItem.put(MoviesListAdapter.HASH_MAP_KEY_DATE, beautifyDate(movieRow.getString(OPM_DATE)));
+
+
+
+            mItem.put(MoviesListAdapter.HASH_MAP_KEY_RATE, convertRateFrom10To5Stars(movieRow.getLong(OPM_RATE)));
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_ADULT, movieRow.getString(OPM_ADULT));
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_LANG, movieRow.getString(OPM_LANG));
             mItem.put(MoviesListAdapter.HASH_MAP_KEY_IMAGE, movieRow.getString(OPM_IMG));
             moviesListAdapter.appendMovie(mItem);
-            //Log.i(LOG_TAG, v);//
+
         }
         
         Log.i(LOG_TAG, "Count: " + String.valueOf(moviesListAdapter.getCount()));
 
+        return true;
+    }
 
+    private String beautifyDate(String movieDate){
+        SimpleDateFormat newDate = new SimpleDateFormat("MMM dd, yyyy");
+        SimpleDateFormat oldDate = new SimpleDateFormat("yyyy-mm-dd");
+        Date mDate = null;
+        try {
+            mDate = oldDate.parse(movieDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(mDate == null) return "N/A";
+
+        return newDate.format(mDate);
+    }
+
+    private String convertRateFrom10To5Stars(long rate){
+        float rateValue = mapNumbers(Float.valueOf(rate), 0, 10, 0, 5);
+        rateValue = (float)Math.round(rateValue * 10) / 10;
+        return String.valueOf(rateValue);
+    }
+
+    private float mapNumbers(float currentValue, float fromRangeMin, float fromRangeMax, float ToRangeMin, float ToRangeMax) {
+        return (currentValue - fromRangeMin) * (ToRangeMax - ToRangeMin) / (fromRangeMax - fromRangeMin) + ToRangeMin;
     }
 
     @Override
     protected String[] doInBackground(String... params) {
-
+        // verify page number
+        if (params.length == 0) {
+            return null;
+        }
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String moviesJsonStr = null;
+        String PARAM_PAGE = "page";
         try {
             // Construct the URL for the themovieDB query
             // Possible parameters are avaiable at themovieDB API page, at
             // https://www.themoviedb.org/documentation/api
             Uri builtUri = Uri.parse(BuildConfig.THE_MOVIE_DB_API_BASE_URL +
                     BuildConfig.THE_MOVIE_DB_API_POPULAR_URL).buildUpon()
-                    .appendQueryParameter(BuildConfig.THE_MOVIE_DB_API_APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY).build();
+                    .appendQueryParameter(BuildConfig.THE_MOVIE_DB_API_APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
+                    .appendQueryParameter(PARAM_PAGE, params[0]).build();
 
             URL url = new URL(builtUri.toString());
 
@@ -168,6 +212,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
     @Override
     protected void onPostExecute(String[] strings) {
         super.onPostExecute(strings);
+        
         moviesListAdapter.notifyDataSetChanged();
+
     }
 }
