@@ -18,26 +18,20 @@
 
 package com.example.android.popularmovies.app;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private Context mContext;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -77,14 +73,38 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        mContext = this.getApplicationContext();
+
+        int defaultTap  = SectionsPagerAdapter.PAGE_MOST_POPULAR;
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String pageType = sharedPreferences.getString(mContext.getString(R.string.pref_page_type), mContext.getString(R.string.pref_page_type_popular_movies));
+        if(pageType.equalsIgnoreCase(getString(R.string.pref_page_type_highest_rated))) {
+            defaultTap = SectionsPagerAdapter.PAGE_TOP_RELATED;
+        }
+        mViewPager.setCurrentItem(defaultTap);
+
         // Attach the page change listener inside the activity
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             // This method will be invoked when a new page becomes selected.
             @Override
             public void onPageSelected(int position) {
-                Toast.makeText(MainActivity.this,
-                        "Selected page position: " + position, Toast.LENGTH_SHORT).show();
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                switch (position) {
+                    case SectionsPagerAdapter.PAGE_MOST_POPULAR:
+                        editor.putString(getString(R.string.pref_page_type), getString(R.string.pref_page_type_popular_movies));
+                        Log.i(LOG_TAG, getString(R.string.pref_page_type_popular_movies));
+                        break;
+                    case SectionsPagerAdapter.PAGE_TOP_RELATED:
+                        editor.putString(getString(R.string.pref_page_type), getString(R.string.pref_page_type_highest_rated));
+                        Log.i(LOG_TAG, getString(R.string.pref_page_type_highest_rated));
+                        break;
+                }
+                editor.commit();
+                Intent intentData = new Intent("fragment.tasks");
+                intentData.putExtra("pupular.movies.fragment", PopularMoviesFragment.BROADCAST_TASK_CLEAN_LIST_AND_UPDATE);
+                LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(intentData);
             }
 
             // This method will be invoked when the current page is scrolled
@@ -126,116 +146,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public MoviesListAdapter moviesListAdapter;
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-            // MoviesListAdapter will take the data from a the list and create the the ListView items
-            moviesListAdapter = new MoviesListAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
-
-            // get a refrance to ListView
-            final ListView listView = (ListView) rootView.findViewById(R.id.movies_list_view);
-
-            listView.setOnScrollListener(new AbsListView.OnScrollListener(){
-                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                }
-                public void onScrollStateChanged(AbsListView view, int scrollState) {
-                    if(scrollState == 0) {
-                        if(view.getCount() - view.getLastVisiblePosition() < 3 ){
-                            if(moviesListAdapter.getNextPage()==moviesListAdapter.getCurrentPage()) {
-                                moviesListAdapter.setNextPage();
-                                updateMovies(moviesListAdapter.getNextPage());
-                            }
-                        }
-                    }
-                }
-            });
-
-
-            // attach adapter to listview
-            listView.setAdapter(moviesListAdapter);
-
-            return rootView;
-        }
-
-        private void updateMovies(int page) {
-            FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesListAdapter);
-            moviesTask.execute(String.valueOf(page));
-        }
-
-        @Override
-        public void onStart() {
-            super.onStart();
-            updateMovies(1);
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter  {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Most Popular";
-                case 1:
-                    return "Highest Rated";
-            }
-            return null;
-        }
-
-
     }
 
 
