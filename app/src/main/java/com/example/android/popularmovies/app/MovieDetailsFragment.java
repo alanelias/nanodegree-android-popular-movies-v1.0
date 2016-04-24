@@ -19,7 +19,11 @@
 package com.example.android.popularmovies.app;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +31,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.ZoomButton;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -39,6 +48,8 @@ public class MovieDetailsFragment extends Fragment {
 
     private HashMap<String, String> mMovieData;
 
+    private boolean isCachedImage;
+    private ImageView movieImage;
     private final String LOG_TAG = PopularMovies.class.getSimpleName();
 
     public MovieDetailsFragment() {
@@ -50,19 +61,46 @@ public class MovieDetailsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
         Intent intent = getActivity().getIntent();
+
+        isCachedImage = false;
+
         if (intent != null && intent.hasExtra(MovieDetails.INTENT_HASHMAP)) {
             mMovieData = (HashMap<String, String>) intent.getSerializableExtra(MovieDetails.INTENT_HASHMAP);
             if(mMovieData != null) {
-                ImageView movieImage= (ImageView) rootView.findViewById(R.id.movie_details_image); // movie image
+                movieImage= (ImageView) rootView.findViewById(R.id.movie_details_image); // movie image
+                movieImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewImageFullSecreen();
+                    }
+                });
                 TextView movieTitle = (TextView) rootView.findViewById(R.id.movie_details_title); // movie title
                 TextView movieDescription = (TextView) rootView.findViewById(R.id.movie_details_description); // movie description
-                TextView movieDate = (TextView) rootView.findViewById(R.id.movie_details_date); // movie date
+                final TextView movieDate = (TextView) rootView.findViewById(R.id.movie_details_date); // movie date
                 TextView movieRate = (TextView) rootView.findViewById(R.id.movie_details_rate); // movie rate
                 RatingBar movieRatingBar = (RatingBar) rootView.findViewById(R.id.movie_details_rating_bar); // movie rating bar
 
+                ZoomButton movieZoomBtn = (ZoomButton) rootView.findViewById(R.id.movie_details_zoomin); // movie zoom in button
+                movieZoomBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        viewImageFullSecreen();
+                    }
+                });
+
                 String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_SINGLE_VIEW_IMG_SIZE + mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_IMAGE);
 
-                Picasso.with(getActivity().getApplicationContext()).load(ImgURL).into(movieImage);
+                Picasso.with(getActivity().getApplicationContext()).load(ImgURL).into(movieImage, new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        isCachedImage = true;
+                    }
+
+                    @Override
+                    public void onError() {
+                        isCachedImage = false;
+                    }
+                });
 
                 movieTitle.setText(mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_TITLE));
                 movieDescription.setText(mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_DESCRIPTION));
@@ -72,10 +110,40 @@ public class MovieDetailsFragment extends Fragment {
                 String ratingValue = mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_RATE);
                 movieRate.setText(ratingValue);
                 movieRatingBar.setRating(Float.valueOf(ratingValue));
-                //rootView.notifyAll();
+
+
             }
         }
         return rootView;
+    }
+
+    public boolean viewImageFullSecreen(){
+        if(!isCachedImage) return false;
+        Bitmap bitmap = ((BitmapDrawable)movieImage.getDrawable()).getBitmap();
+        final String filepath =  Environment.getExternalStorageDirectory().getAbsolutePath() +
+                "/popularmovies";
+        File dir = new File(filepath);
+
+        if(!dir.exists())dir.mkdirs();
+
+        File file = new File(dir, "cached.png");
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            try {
+                fOut.flush();
+                fOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Intent it = new Intent(Intent.ACTION_VIEW);
+        it.setDataAndType(Uri.fromFile(file), "image/*");
+        startActivity(it);
+        return true;
     }
 
     @Override
