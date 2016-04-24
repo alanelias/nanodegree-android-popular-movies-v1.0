@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class PopularMoviesFragment extends Fragment {
 
     public static final int BROADCAST_TASK_CLEAN_LIST_AND_UPDATE = 999;
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String LOG_TAG = PopularMovies.class.getSimpleName();
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -69,7 +70,7 @@ public class PopularMoviesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_popular_movies, container, false);
 
         // MoviesListAdapter will take the data from a the list and create the the ListView items
         moviesListAdapter = new MoviesListAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
@@ -90,6 +91,14 @@ public class PopularMoviesFragment extends Fragment {
                         }
                     }
                 }
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), MovieDetails.class).putExtra(MovieDetails.INTENT_HASHMAP, moviesListAdapter.getItem(position));
+                startActivity(intent);
             }
         });
 
