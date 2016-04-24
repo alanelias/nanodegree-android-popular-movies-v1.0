@@ -74,8 +74,8 @@ public class MoviesListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return position;
+    public HashMap<String, String> getItem(int position) {
+        return moviesData.get(position);
     }
 
     @Override
