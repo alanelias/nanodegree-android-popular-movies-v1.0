@@ -19,8 +19,10 @@
 package com.example.android.popularmovies.app;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -90,7 +92,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
 
 
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_RATE, convertRateFrom10To5Stars(movieRow.getLong(OPM_RATE)));
+            mItem.put(MoviesListAdapter.HASH_MAP_KEY_RATE, convertRateFrom10To5Stars(Float.valueOf(movieRow.getString(OPM_RATE))));
 
             String movieAges = mContext.getString(R.string.movie_adult_all);
             if(movieRow.getString(OPM_ADULT).equalsIgnoreCase("true")) {
@@ -123,8 +125,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         return newDate.format(mDate);
     }
 
-    private String convertRateFrom10To5Stars(long rate){
-        float rateValue = mapNumbers(Float.valueOf(rate), 0, 10, 0, 5);
+    private String convertRateFrom10To5Stars(float rate){
+        float rateValue = mapNumbers(rate, 0, 10, 0, 5);
         rateValue = (float)Math.round(rateValue * 10) / 10;
         return String.valueOf(rateValue);
     }
@@ -143,12 +145,22 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         BufferedReader reader = null;
         String moviesJsonStr = null;
         String PARAM_PAGE = "page";
+        String PAGE_TYPE = BuildConfig.THE_MOVIE_DB_API_POPULAR_URL;
+
+        // get page type from shared preferences
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        String pageType = sharedPreferences.getString(mContext.getString(R.string.pref_page_type), mContext.getString(R.string.pref_page_type_popular_movies));
+        Log.i(LOG_TAG, pageType);
+        if(pageType.equalsIgnoreCase(mContext.getString(R.string.pref_page_type_highest_rated))) {
+            PAGE_TYPE = BuildConfig.THE_MOVIE_DB_API_TOP_RETED_URL;
+        }
+
         try {
             // Construct the URL for the themovieDB query
             // Possible parameters are avaiable at themovieDB API page, at
             // https://www.themoviedb.org/documentation/api
             Uri builtUri = Uri.parse(BuildConfig.THE_MOVIE_DB_API_BASE_URL +
-                    BuildConfig.THE_MOVIE_DB_API_POPULAR_URL).buildUpon()
+                    PAGE_TYPE ).buildUpon()
                     .appendQueryParameter(BuildConfig.THE_MOVIE_DB_API_APIKEY_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                     .appendQueryParameter(PARAM_PAGE, params[0]).build();
 
