@@ -4,4 +4,8 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="movie_adult_plus_18">+18</string>
     <string name="movie_adult_all">+12</string>
+
+    <string name="pref_page_type">Page Type</string>
+    <string name="pref_page_type_popular_movies">Popular Movies</string>
+    <string name="pref_page_type_highest_rated">Highest Rated</string>
 </resources>
