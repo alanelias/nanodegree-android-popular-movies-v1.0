@@ -44,13 +44,13 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-    private MoviesListAdapter moviesListAdapter;
+    private MoviesAdapter moviesAdapter;
     private final Context mContext;
 
 
-    public FetchMoviesTask(Context context, MoviesListAdapter mMoviesListAdapter) {
+    public FetchMoviesTask(Context context, MoviesAdapter mMoviesAdapter) {
         mContext = context;
-        moviesListAdapter = mMoviesListAdapter;
+        moviesAdapter = mMoviesAdapter;
 
         Log.i(LOG_TAG, "FetchMoviesTask");
     }
@@ -74,7 +74,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
         // verify response page number and update the adapter page number
         if(page > 0){
-            moviesListAdapter.setCurrentPage(page);
+            moviesAdapter.setCurrentPage(page);
         } else return false;
 
         JSONArray moviesArray = moviesJson.getJSONArray(OPM_LIST);
@@ -85,27 +85,27 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             JSONObject movieRow = moviesArray.getJSONObject(i);
             HashMap<String, String> mItem = new HashMap<String, String>();
 
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_ID, movieRow.getString(OPM_ID));
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_TITLE, movieRow.getString(OPM_TITLE));
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_DESCRIPTION, movieRow.getString(OPM_DESCRIPTION));
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_DATE, beautifyDate(movieRow.getString(OPM_DATE)));
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_ID, movieRow.getString(OPM_ID));
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_TITLE, movieRow.getString(OPM_TITLE));
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_DESCRIPTION, movieRow.getString(OPM_DESCRIPTION));
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_DATE, beautifyDate(movieRow.getString(OPM_DATE)));
 
 
 
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_RATE, convertRateFrom10To5Stars(Float.valueOf(movieRow.getString(OPM_RATE))));
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_RATE, convertRateFrom10To5Stars(Float.valueOf(movieRow.getString(OPM_RATE))));
 
             String movieAges = mContext.getString(R.string.movie_adult_all);
             if(movieRow.getString(OPM_ADULT).equalsIgnoreCase("true")) {
                 movieAges = mContext.getString(R.string.movie_adult_plus_18);
             }
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_ADULT, movieAges);
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_LANG, movieRow.getString(OPM_LANG));
-            mItem.put(MoviesListAdapter.HASH_MAP_KEY_IMAGE, movieRow.getString(OPM_IMG));
-            moviesListAdapter.appendMovie(mItem);
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_ADULT, movieAges);
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_LANG, movieRow.getString(OPM_LANG));
+            mItem.put(MoviesAdapter.HASH_MAP_KEY_IMAGE, movieRow.getString(OPM_IMG));
+            moviesAdapter.appendMovie(mItem);
 
         }
         
-        Log.i(LOG_TAG, "Count: " + String.valueOf(moviesListAdapter.getCount()));
+        Log.i(LOG_TAG, "Count: " + String.valueOf(moviesAdapter.getCount()));
 
         return true;
     }
@@ -230,7 +230,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
     protected void onPostExecute(String[] strings) {
         super.onPostExecute(strings);
         
-        moviesListAdapter.notifyDataSetChanged();
+        moviesAdapter.notifyDataSetChanged();
 
     }
 }
