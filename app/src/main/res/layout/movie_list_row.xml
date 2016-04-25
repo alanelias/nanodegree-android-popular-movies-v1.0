@@ -96,6 +96,7 @@
         android:layout_below="@+id/movie_row_description"
         android:layout_toRightOf="@+id/movie_row_thumbnail"
         android:layout_toEndOf="@+id/movie_row_thumbnail"
+        android:isIndicator="true"
         android:stepSize="0.5" />
 
     <TextView
