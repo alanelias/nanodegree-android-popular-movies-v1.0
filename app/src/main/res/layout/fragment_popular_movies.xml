@@ -16,4 +16,5 @@
         android:drawSelectorOnTop="false"
         android:choiceMode="singleChoice"
         android:contextClickable="false" />
+
 </RelativeLayout>

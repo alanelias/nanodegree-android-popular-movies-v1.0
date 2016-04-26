@@ -30,96 +30,112 @@
         android:layout_alignBottom="@+id/movie_details_image"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="115dp"
-        android:text="Please wait, Loading Image..." />
+        android:text="Please wait, Loading Image..."
+        android:textColor="#FFF"
+        android:background="#4A3594"
+        android:padding="5dp"
+        android:textSize="10dp" />
 
     <ImageView
         android:id="@+id/movie_details_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/movie_detials_loading_image"
         android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/movie_detials_loading_image"
+        android:layout_marginBottom="10dp"
         android:adjustViewBounds="true"
         android:cropToPadding="true"
         android:maxHeight="250dp"
         android:minHeight="250dp"
         android:scaleType="centerCrop"
-        android:layout_marginBottom="10dp" />
+        android:layout_alignLeft="@+id/movie_detials_loading_image"
+        android:layout_alignStart="@+id/movie_detials_loading_image"
+        android:minWidth="250dp" />
+
+    <ZoomButton
+        android:id="@+id/movie_details_zoomin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/movie_details_image"
+        android:layout_alignLeft="@+id/movie_detials_loading_image"
+        android:layout_alignStart="@+id/movie_detials_loading_image"
+        android:padding="10dp"
+        android:src="@android:drawable/btn_plus" />
 
     <TextView
         android:id="@+id/movie_details_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignEnd="@+id/movie_details_image"
         android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/movie_details_image"
         android:alpha="0.8"
-        android:background="#FFF"
+        android:background="#9B51A0"
         android:padding="7dp"
         android:text="Jun 04, 2016"
-        android:textSize="20dp"
+        android:textColor="#FFF"
+        android:textSize="12dp"
         android:textStyle="italic" />
 
 
-    <RatingBar
-        android:id="@+id/movie_details_rating_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/movie_details_image"
-        android:isIndicator="true"
-        android:numStars="5"
-        android:stepSize="0.5" />
+        android:paddingBottom="20dp"
+        android:padding="10dp"
+        android:background="#DEBDDB"
+        android:layout_margin="10dp"
+        android:paddingTop="20dp"
+        android:alpha="0.8">
 
-    <TextView
-        android:id="@+id/movie_details_rate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingRight="10dp"
-        android:paddingTop="5dp"
-        android:text="@string/temp_movie_details_rate"
-        android:textSize="35dp"
-        android:layout_below="@+id/movie_details_image"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        <RatingBar
+            android:id="@+id/movie_details_rating_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
 
-    <TextView
-        android:id="@+id/movie_details_title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/movie_details_rating_bar"
-        android:text="@string/temp_movie_details_title"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" />
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5" />
 
-    <TextView
-        android:id="@+id/movie_details_description"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/movie_details_title"
-        android:text="@string/temp_movie_details_description"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:layout_marginTop="10dp" />
+        <TextView
+            android:id="@+id/movie_details_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:text="@string/temp_movie_details_rate"
+            android:textSize="35dp" />
 
-    <ZoomButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/movie_details_zoomin"
-        android:layout_alignBottom="@+id/movie_details_image"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:src="@android:drawable/btn_plus"
-        android:padding="10dp" />
+        <TextView
+            android:id="@+id/movie_details_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/movie_details_rating_bar"
+            android:text="@string/temp_movie_details_title"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:textColor="#4A3594" />
+
+        <TextView
+            android:id="@+id/movie_details_description"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/movie_details_title"
+            android:layout_marginTop="10dp"
+            android:text="@string/temp_movie_details_description"
+            android:background="#D1C4E9"
+            android:padding="5dp" />
+    </RelativeLayout>
 
 </RelativeLayout>
 

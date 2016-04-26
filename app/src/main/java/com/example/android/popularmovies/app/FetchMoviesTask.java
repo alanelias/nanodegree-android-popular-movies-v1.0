@@ -141,6 +141,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         if (params.length == 0) {
             return null;
         }
+
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String moviesJsonStr = null;
