@@ -35,20 +35,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="false"
         android:alpha="0.9"
-        android:background="#4A3594"
+        android:background="@color/colorWhite"
         android:gravity="bottom|center"
         android:orientation="horizontal"
         android:padding="10dp">
 
         <RatingBar
             android:id="@+id/movie_rating_bar"
-            style="?android:attr/ratingBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:isIndicator="true"
-            android:numStars="5"
-            android:stepSize="0.5" />
+            style="@style/ratingBarSmall"
+            android:layout_gravity="right" />
     </LinearLayout>
 
     <TextView
@@ -64,7 +59,7 @@
         android:layout_alignRight="@+id/movie_row_image"
         android:layout_alignEnd="@+id/movie_row_image"
         android:padding="5dp"
-        android:background="#9B51A0"
+        android:background="@color/colorAccent"
         android:alpha="0.8"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="false" />

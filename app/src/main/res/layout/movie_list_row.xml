@@ -88,16 +88,11 @@
         android:layout_toEndOf="@id/movie_row_thumbnail" />
 
     <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/movie_rating_bar"
-        android:numStars="5"
-        style="?android:attr/ratingBarStyleSmall"
+        style="@style/ratingBarSmall"
         android:layout_below="@+id/movie_row_description"
         android:layout_toRightOf="@+id/movie_row_thumbnail"
-        android:layout_toEndOf="@+id/movie_row_thumbnail"
-        android:isIndicator="true"
-        android:stepSize="0.5" />
+        android:layout_toEndOf="@+id/movie_row_thumbnail" />
 
     <TextView
         android:id="@+id/movie_row_rate"
