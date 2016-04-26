@@ -45,8 +45,10 @@ public class PopularMovies extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
+    // reference to Context
     private Context mContext;
 
+    // define log tag
     private final String LOG_TAG = PopularMovies.class.getSimpleName();
 
     /**
@@ -61,6 +63,7 @@ public class PopularMovies extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -75,12 +78,19 @@ public class PopularMovies extends AppCompatActivity {
 
         mContext = this.getApplicationContext();
 
+        // define default tap and set popular movies as default
         int defaultTap  = SectionsPagerAdapter.PAGE_MOST_POPULAR;
+
+        // get reference to sharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        // get the value of Order type (Page type) (Popular Movies = 0 / Highest Rated = 1)
         String pageType = sharedPreferences.getString(mContext.getString(R.string.pref_page_type), mContext.getString(R.string.pref_page_type_popular_movies));
         if(pageType.equalsIgnoreCase(getString(R.string.pref_page_type_highest_rated))) {
             defaultTap = SectionsPagerAdapter.PAGE_TOP_RELATED;
         }
+
+        // set the e current tap active
         mViewPager.setCurrentItem(defaultTap);
 
         // Attach the page change listener inside the activity
@@ -89,38 +99,43 @@ public class PopularMovies extends AppCompatActivity {
             // This method will be invoked when a new page becomes selected.
             @Override
             public void onPageSelected(int position) {
+                // On page selected we need to update the page type key with the current tap value
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
+
                 switch (position) {
                     case SectionsPagerAdapter.PAGE_MOST_POPULAR:
+
                         editor.putString(getString(R.string.pref_page_type), getString(R.string.pref_page_type_popular_movies));
+
                         Log.i(LOG_TAG, getString(R.string.pref_page_type_popular_movies));
+
                         break;
                     case SectionsPagerAdapter.PAGE_TOP_RELATED:
+
                         editor.putString(getString(R.string.pref_page_type), getString(R.string.pref_page_type_highest_rated));
+
                         Log.i(LOG_TAG, getString(R.string.pref_page_type_highest_rated));
+
                         break;
                 }
+                // Save new values to sharedPreferences
                 editor.commit();
+
+                // send broadcast message to fragment class to update the movies list
                 sendTaskToFragment(PopularMoviesFragment.BROADCAST_TASK_CLEAN_LIST_AND_UPDATE);
             }
 
-            // This method will be invoked when the current page is scrolled
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // Code goes here
-                Log.i(LOG_TAG, String.valueOf(position) + " - " + String.valueOf(positionOffset) + " - " + String.valueOf(positionOffsetPixels));
+
             }
 
-            // Called when the scroll state changes:
-            // SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING, SCROLL_STATE_SETTLING
             @Override
             public void onPageScrollStateChanged(int state) {
-                // Code goes here
+
             }
         });
-
-
     }
 
 
@@ -140,30 +155,38 @@ public class PopularMovies extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_view_grid) {
+            // On view grid call changeMoviesView to change the movies view
             changeMoviesView(getString(R.string.pref_movies_view_grid));
+
             return true;
         }else if(id == R.id.action_view_list) {
+            // On view list call changeMoviesView to change the movies view
             changeMoviesView(getString(R.string.pref_movies_view_list));
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    // this method will send broadcast message to fragment
+    // with task number
     private void sendTaskToFragment(int taskName){
         Intent intentData = new Intent("fragment.tasks");
         intentData.putExtra("pupular.movies.fragment", taskName);
         LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(intentData);
     }
 
-    private  void changeMoviesView(String viewMode){
+    // will change the movies view to list or grid
+    private void changeMoviesView(String viewMode){
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
+        // save the new value of movies view mode
         editor.putString(getString(R.string.pref_movies_view), viewMode);
-        Log.i(LOG_TAG, viewMode);
-
         editor.commit();
+
+        // send broadcast message to fragment to update the UI
         sendTaskToFragment(PopularMoviesFragment.BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT);
     }
 
