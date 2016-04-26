@@ -18,6 +18,7 @@
 
 package com.example.android.popularmovies.app;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -27,11 +28,15 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+    // declare order types pages
     public static final int PAGE_MOST_POPULAR = 0;
     public static final int PAGE_TOP_RELATED = 1;
 
-    public SectionsPagerAdapter(FragmentManager fm) {
+    private Context mContext;
+
+    public SectionsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
+        mContext = context;
     }
 
     @Override
@@ -51,9 +56,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case PAGE_MOST_POPULAR:
-                return "Most Popular";
+                return mContext.getString(R.string.pref_page_type_popular_movies);
             case PAGE_TOP_RELATED:
-                return "Highest Rated";
+                return mContext.getString(R.string.pref_page_type_highest_rated);
         }
         return null;
     }
