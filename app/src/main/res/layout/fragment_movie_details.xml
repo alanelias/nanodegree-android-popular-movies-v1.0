@@ -76,7 +76,7 @@
         android:padding="7dp"
         android:text="@string/temp_movie_details_date"
         android:textColor="@color/colorWhite"
-        android:textSize="15sp"
+        android:textSize="10sp"
         android:textStyle="italic" />
 
 
