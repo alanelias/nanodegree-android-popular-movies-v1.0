@@ -44,24 +44,30 @@ import java.util.HashMap;
 
 public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 
+    // define log tag name
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
+    // reference to gridview adapter
     private MoviesAdapter moviesAdapter;
+
+    // reference to Context
     private final Context mContext;
 
+    // reference to dialog (the waiting screen)
     private ProgressDialog dialog;
 
 
     public FetchMoviesTask(Context context, MoviesAdapter mMoviesAdapter) {
         mContext = context;
         moviesAdapter = mMoviesAdapter;
-        Log.i(LOG_TAG, "FetchMoviesTask");
         dialog = new ProgressDialog(context);
     }
 
 
-
+    // process api server response as json and create
+    // array of movies and return it back
     protected ArrayList<HashMap<String, String>> appendMoviesDataFromJsonToAdapter(String jsonString) throws JSONException {
+
         // These are the names of the JSON objects that need to be extracted.
         final String OPM_LIST = "results";
         final String OPM_ID = "id";
@@ -74,6 +80,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
         final String OPM_IMG = "poster_path";
         final String OPM_PAGE = "page";
 
+        // define list of all movies
         ArrayList<HashMap<String, String>> moviesData = new ArrayList<HashMap<String, String>>();
 
         JSONObject moviesJson = new JSONObject(jsonString);
@@ -97,11 +104,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
             mItem.put(MoviesAdapter.HASH_MAP_KEY_TITLE, movieRow.getString(OPM_TITLE));
             mItem.put(MoviesAdapter.HASH_MAP_KEY_DESCRIPTION, movieRow.getString(OPM_DESCRIPTION));
             mItem.put(MoviesAdapter.HASH_MAP_KEY_DATE, beautifyDate(movieRow.getString(OPM_DATE)));
-
-
-
             mItem.put(MoviesAdapter.HASH_MAP_KEY_RATE, convertRateFrom10To5Stars(Float.valueOf(movieRow.getString(OPM_RATE))));
-
             String movieAges = mContext.getString(R.string.movie_adult_all);
             if(movieRow.getString(OPM_ADULT).equalsIgnoreCase("true")) {
                 movieAges = mContext.getString(R.string.movie_adult_plus_18);
@@ -114,12 +117,11 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
             //moviesAdapter.appendMovie(mItem);
 
         }
-        
-        Log.i(LOG_TAG, "Count: " + String.valueOf(moviesAdapter.getCount()));
 
         return moviesData;
     }
 
+    // convert date from yyyy-mm-dd to MMM dd, yyyy
     private String beautifyDate(String movieDate){
         SimpleDateFormat newDate = new SimpleDateFormat("MMM dd, yyyy");
         SimpleDateFormat oldDate = new SimpleDateFormat("yyyy-mm-dd");
@@ -135,12 +137,14 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
         return newDate.format(mDate);
     }
 
+    // convert rate from 10 to 5
     private String convertRateFrom10To5Stars(float rate){
         float rateValue = mapNumbers(rate, 0, 10, 0, 5);
         rateValue = (float)Math.round(rateValue * 10) / 10;
         return String.valueOf(rateValue);
     }
 
+    // mapping numbers between two ranges
     private float mapNumbers(float currentValue, float fromRangeMin, float fromRangeMax, float ToRangeMin, float ToRangeMax) {
         return (currentValue - fromRangeMin) * (ToRangeMax - ToRangeMin) / (fromRangeMax - fromRangeMin) + ToRangeMin;
     }
@@ -206,7 +210,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
                 return null;
             }
             moviesJsonStr = buffer.toString();
-            Log.i(LOG_TAG, moviesJsonStr);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
@@ -240,8 +243,11 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
     @Override
     protected void onPostExecute(ArrayList<HashMap<String, String>> moviesData) {
         super.onPostExecute(moviesData);
+
+        // add the new data to adapter
         moviesAdapter.appendMovies(moviesData);
 
+        // dismiss waiting message
         if (dialog.isShowing()) {
             dialog.dismiss();
         }
@@ -251,6 +257,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
     protected void onPreExecute() {
         super.onPreExecute();
 
+        // create waiting message
         this.dialog.setMessage("Loading please wait..");
         this.dialog.show();
 
