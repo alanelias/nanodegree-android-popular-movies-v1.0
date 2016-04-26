@@ -23,14 +23,14 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context=".MovieDetails"
-    android:background="@drawable/details_header_bg">
+    android:background="@drawable/details_activity_background">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:id="@+id/view"
-        android:background="#00ffffff">
+        android:background="@android:color/transparent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"

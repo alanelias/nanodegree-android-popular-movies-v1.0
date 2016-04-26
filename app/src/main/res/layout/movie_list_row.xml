@@ -20,7 +20,7 @@
             android:cropToPadding="false"
             android:text="@string/movies_view_loading_image"
             android:textSize="8sp"
-            android:textColor="#3399ff"
+            android:textColor="@color/colorPrimaryDark"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -43,7 +43,7 @@
         android:cropToPadding="false"
         android:text="@string/temp_movie_details_adult"
         android:textSize="10sp"
-        android:textColor="#FFF"
+        android:textColor="@color/colorWhite"
         android:background="#4A3594"
         android:alpha="0.6"
             android:layout_alignBottom="@+id/movie_row_image"
@@ -51,7 +51,7 @@
             android:layout_alignEnd="@+id/movie_row_image"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical|center_horizontal" />
 
     </RelativeLayout>
 
@@ -62,7 +62,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="@string/temp_movie_details_title"
-        android:textColor="#4A3594"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="15sp"
         android:textStyle="bold"
         android:typeface="sans"
@@ -79,7 +79,7 @@
         android:layout_toRightOf="@+id/movie_row_thumbnail"
         android:ellipsize="end"
         android:text="@string/temp_movie_details_description"
-        android:textColor="#343434"
+        android:textColor="@color/colorBlack"
         android:textSize="10sp"
         android:lines="2"
         android:gravity="left"
@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:gravity="right"
         android:text="@string/temp_movie_details_rate"
-        android:textColor="#9B51A0"
+        android:textColor="@color/colorPrimary"
         android:textSize="13sp"
         android:textStyle="bold"
         android:layout_below="@+id/movie_row_description"
@@ -126,7 +126,7 @@
         android:layout_centerVertical="false"
         android:gravity="right"
         android:text="@string/temp_movie_details_date"
-        android:textColor="#9B51A0"
+        android:textColor="@color/colorPrimary"
         android:textSize="12sp"
         android:textStyle="bold"
         android:layout_alignParentEnd="true"

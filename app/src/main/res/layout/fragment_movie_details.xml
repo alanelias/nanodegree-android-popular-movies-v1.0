@@ -31,10 +31,11 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="115dp"
         android:text="@string/please_wait_loading_image"
-        android:textColor="#FFF"
-        android:background="#4A3594"
+        android:textColor="@color/colorWhite"
         android:padding="5dp"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:layout_alignParentEnd="false"
+        android:background="@color/colorPrimaryDark" />
 
     <ImageView
         android:id="@+id/movie_details_image"
@@ -71,10 +72,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/movie_details_image"
         android:alpha="0.8"
-        android:background="#9B51A0"
+        android:background="@color/colorPrimary"
         android:padding="7dp"
         android:text="@string/temp_movie_details_date"
-        android:textColor="#FFF"
+        android:textColor="@color/colorWhite"
         android:textSize="15sp"
         android:textStyle="italic" />
 
@@ -85,7 +86,7 @@
         android:layout_below="@+id/movie_details_image"
         android:paddingBottom="20dp"
         android:padding="10dp"
-        android:background="#DEBDDB"
+        android:background="@color/colorPrimaryMed"
         android:layout_margin="10dp"
         android:paddingTop="20dp">
 
@@ -109,7 +110,8 @@
             android:paddingRight="10dp"
             android:paddingTop="5dp"
             android:text="@string/temp_movie_details_rate"
-            android:textSize="35sp" />
+            android:textSize="35sp"
+            android:textColor="@color/colorBlack" />
 
         <TextView
             android:id="@+id/movie_details_title"
@@ -121,7 +123,8 @@
             android:text="@string/temp_movie_details_title"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:textColor="#4A3594" />
+            android:textColor="@color/colorPrimaryDark"
+            android:contextClickable="false" />
 
         <TextView
             android:id="@+id/movie_details_description"
@@ -132,8 +135,9 @@
             android:layout_below="@+id/movie_details_title"
             android:layout_marginTop="10dp"
             android:text="@string/temp_movie_details_description"
-            android:background="#D1C4E9"
-            android:padding="5dp" />
+            android:background="@color/colorPrimaryLight"
+            android:padding="5dp"
+            android:textColor="@color/colorBlack" />
     </RelativeLayout>
 
 </RelativeLayout>

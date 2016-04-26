@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     tools:context=".PopularMovies"
     android:foregroundGravity="bottom"
-    android:background="#D1C4E9">
+    android:background="@color/colorBackground">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/appbar_padding_top"
         android:theme="@style/AppTheme.AppBarOverlay"
-        android:background="@drawable/main_background"
+        android:background="@drawable/movies_activity_header_background"
         android:measureWithLargestChild="false"
         android:baselineAligned="false">
 
