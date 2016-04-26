@@ -74,10 +74,6 @@ public class PopularMoviesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_popular_movies, container, false);
 
-
-        // MoviesListAdapter will take the data from a the list and create the the ListView items
-        moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
-
         // get a refrance to ListView
         gridView = (GridView) rootView.findViewById(R.id.movies_list_view);
 
@@ -106,11 +102,8 @@ public class PopularMoviesFragment extends Fragment {
             }
         });
 
-
-        updateMoviesViewMode();
-
-        // attach adapter to listview
-        gridView.setAdapter(moviesAdapter);
+        // create and attach adapter to gridview
+        createGridViewAdapter();
 
         return rootView;
     }
@@ -151,17 +144,12 @@ public class PopularMoviesFragment extends Fragment {
 
             final int task = intent.getIntExtra("pupular.movies.fragment", -1);
             if (task == BROADCAST_TASK_CLEAN_LIST_AND_UPDATE) {
-                Log.i(LOG_TAG, "Task Received " + task);
-
-                moviesAdapter.clearAdapter();
-                moviesAdapter.notifyDataSetChanged();
+                // recreate and attach adapter to gridview
+                createGridViewAdapter();
                 updateMovies(1);
             } else if (task == BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT) {
-//                updateMoviesViewMode();
-//                moviesAdapter.clearAdapter();
-                moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
-                updateMoviesViewMode();
-                gridView.setAdapter(moviesAdapter);
+                // recreate and attach adapter to gridview
+                createGridViewAdapter();
                 updateMovies(1);
             }
 
@@ -173,6 +161,13 @@ public class PopularMoviesFragment extends Fragment {
         String moviesViewMode = sharedPreferences.getString(getString(R.string.pref_movies_view), getString(R.string.pref_movies_view_list));
         moviesAdapter.MOVIES_VIEW = moviesViewMode;
 
+    }
+
+    private void createGridViewAdapter(){
+        // MoviesAdapter will take the data from a the list and create the the ListView items
+        moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
+        updateMoviesViewMode();
+        gridView.setAdapter(moviesAdapter);
     }
 
 }
