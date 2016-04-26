@@ -40,7 +40,9 @@ public class MoviesAdapter extends BaseAdapter {
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     private Activity activity;
+
     private Context mContext;
+
     private static LayoutInflater inflater=null;
 
     public static final String HASH_MAP_KEY_ID = "id";
@@ -125,6 +127,7 @@ public class MoviesAdapter extends BaseAdapter {
 
         movieDate.setText(singleRow.get(HASH_MAP_KEY_DATE));
 
+        // check the view mode if list we have to show more information
         if(moviesViewLayout == R.layout.movie_list_row) {
             movieTitle = (TextView) convertView.findViewById(R.id.movie_row_title); // movie title
             movieDesciption = (TextView) convertView.findViewById(R.id.movie_row_description); // movie description
@@ -172,12 +175,14 @@ public class MoviesAdapter extends BaseAdapter {
         nextPage = currentPage + 1;
     }
 
+    // add single movie date
     public void appendMovie(HashMap<String, String> newMovieData){
         moviesData.add(newMovieData);
     }
 
+    // add movies data
     public void appendMovies(ArrayList<HashMap<String, String>> newMoviesData){
-        //int position = gridView.getFirstVisiblePosition();
+
         if(newMoviesData != null) {
             moviesData.addAll(newMoviesData);
             /*for (int i = 0; i < newMoviesData.size(); i++) {
@@ -185,13 +190,9 @@ public class MoviesAdapter extends BaseAdapter {
                 moviesData.add(movieData);
             }*/
         }
-        //gridView.setSelection(201);
-        notifyDataSetChanged();
-        //gridView.clearFocus();
-        //gridView.setFocusable(true);
 
-        // Set position of the scroll
-        //gridView.setSelection(201);
+        notifyDataSetChanged();
+
 
     }
 
