@@ -12,5 +12,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="60dp" />
+        android:layout_marginBottom="60dp"
+        android:drawSelectorOnTop="false"
+        android:choiceMode="singleChoice"
+        android:contextClickable="false" />
 </RelativeLayout>

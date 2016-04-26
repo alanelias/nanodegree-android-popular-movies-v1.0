@@ -34,7 +34,7 @@
             android:layout_width="50dip"
             android:layout_height="60dip"
             android:src="@android:drawable/sym_def_app_icon"
-            android:scaleType="matrix" />
+            android:scaleType="centerCrop" />
 
         <TextView
         android:layout_width="wrap_content"
@@ -43,9 +43,9 @@
         android:cropToPadding="false"
         android:text="+18"
         android:textSize="10dp"
-        android:textColor="#3399ff"
+        android:textColor="#FFF"
         android:textAlignment="center"
-        android:background="#FFF"
+        android:background="#4A3594"
         android:alpha="0.6"
             android:layout_alignBottom="@+id/movie_row_image"
             android:layout_alignRight="@+id/movie_row_image"
@@ -62,7 +62,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Epsum factorial non deposit quid pro"
-        android:textColor="#040404"
+        android:textColor="#4A3594"
         android:textSize="15dip"
         android:textStyle="bold"
         android:typeface="sans"
@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:gravity="right"
         android:text="4.2"
-        android:textColor="#3399ff"
+        android:textColor="#9B51A0"
         android:textSize="13sp"
         android:textStyle="bold"
         android:layout_below="@+id/movie_row_description"
@@ -126,7 +126,7 @@
         android:layout_centerVertical="false"
         android:gravity="right"
         android:text="April 2016"
-        android:textColor="#3399ff"
+        android:textColor="#9B51A0"
         android:textSize="12sp"
         android:textStyle="bold"
         android:layout_alignParentEnd="true"
