@@ -46,10 +46,14 @@ import java.util.HashMap;
  */
 public class MovieDetailsFragment extends Fragment {
 
+    // received movie details from main activity
     private HashMap<String, String> mMovieData;
 
     private boolean isCachedImage;
+
     private ImageView movieImage;
+
+    // declare log tag name
     private final String LOG_TAG = PopularMovies.class.getSimpleName();
 
     public MovieDetailsFragment() {
@@ -64,23 +68,38 @@ public class MovieDetailsFragment extends Fragment {
 
         isCachedImage = false;
 
+        // receive movie details from main activity
         if (intent != null && intent.hasExtra(MovieDetails.INTENT_HASHMAP)) {
             mMovieData = (HashMap<String, String>) intent.getSerializableExtra(MovieDetails.INTENT_HASHMAP);
             if(mMovieData != null) {
-                movieImage= (ImageView) rootView.findViewById(R.id.movie_details_image); // movie image
+
+                // movie image
+                movieImage= (ImageView) rootView.findViewById(R.id.movie_details_image);
                 movieImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         viewImageFullSecreen();
                     }
                 });
-                TextView movieTitle = (TextView) rootView.findViewById(R.id.movie_details_title); // movie title
-                TextView movieDescription = (TextView) rootView.findViewById(R.id.movie_details_description); // movie description
-                final TextView movieDate = (TextView) rootView.findViewById(R.id.movie_details_date); // movie date
-                TextView movieRate = (TextView) rootView.findViewById(R.id.movie_details_rate); // movie rate
-                RatingBar movieRatingBar = (RatingBar) rootView.findViewById(R.id.movie_details_rating_bar); // movie rating bar
 
-                ZoomButton movieZoomBtn = (ZoomButton) rootView.findViewById(R.id.movie_details_zoomin); // movie zoom in button
+                // movie title
+                TextView movieTitle = (TextView) rootView.findViewById(R.id.movie_details_title);
+
+                // movie description
+                TextView movieDescription = (TextView) rootView.findViewById(R.id.movie_details_description);
+
+                // movie date
+                final TextView movieDate = (TextView) rootView.findViewById(R.id.movie_details_date);
+
+                // movie rate
+                TextView movieRate = (TextView) rootView.findViewById(R.id.movie_details_rate);
+
+                // movie rating bar
+                RatingBar movieRatingBar = (RatingBar) rootView.findViewById(R.id.movie_details_rating_bar);
+
+                // movie zoom in button
+                ZoomButton movieZoomBtn = (ZoomButton) rootView.findViewById(R.id.movie_details_zoomin);
+                // click listener to trigger full screen view
                 movieZoomBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -88,8 +107,10 @@ public class MovieDetailsFragment extends Fragment {
                     }
                 });
 
+                // building the image url
                 String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_SINGLE_VIEW_IMG_SIZE + mMovieData.get(MoviesAdapter.HASH_MAP_KEY_IMAGE);
 
+                // download the image and caching
                 Picasso.with(getActivity().getApplicationContext()).load(ImgURL).into(movieImage, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
@@ -103,23 +124,31 @@ public class MovieDetailsFragment extends Fragment {
                 });
 
                 movieTitle.setText(mMovieData.get(MoviesAdapter.HASH_MAP_KEY_TITLE));
+
                 movieDescription.setText(mMovieData.get(MoviesAdapter.HASH_MAP_KEY_DESCRIPTION));
 
                 movieDate.setText(mMovieData.get(MoviesAdapter.HASH_MAP_KEY_DATE));
 
                 String ratingValue = mMovieData.get(MoviesAdapter.HASH_MAP_KEY_RATE);
+
                 movieRate.setText(ratingValue);
+
                 movieRatingBar.setRating(Float.valueOf(ratingValue));
-
-
             }
         }
         return rootView;
     }
 
+    // open saved image with default system image viewer
     public boolean viewImageFullSecreen(){
+
+        // check if the image is downloaded
         if(!isCachedImage) return false;
+
+        // reference to bitmap image
         Bitmap bitmap = ((BitmapDrawable)movieImage.getDrawable()).getBitmap();
+
+        // browsing to External Storage and create new folder to store the image there
         final String filepath =  Environment.getExternalStorageDirectory().getAbsolutePath() +
                 "/popularmovies";
         File dir = new File(filepath);
@@ -140,6 +169,7 @@ public class MovieDetailsFragment extends Fragment {
             e.printStackTrace();
         }
 
+        // open the image in default system image viewer
         Intent it = new Intent(Intent.ACTION_VIEW);
         it.setDataAndType(Uri.fromFile(file), "image/*");
         startActivity(it);
