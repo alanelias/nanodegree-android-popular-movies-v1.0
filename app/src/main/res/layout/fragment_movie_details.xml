@@ -30,11 +30,11 @@
         android:layout_alignBottom="@+id/movie_details_image"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="115dp"
-        android:text="Please wait, Loading Image..."
+        android:text="@string/please_wait_loading_image"
         android:textColor="#FFF"
         android:background="#4A3594"
         android:padding="5dp"
-        android:textSize="10dp" />
+        android:textSize="10sp" />
 
     <ImageView
         android:id="@+id/movie_details_image"
@@ -73,9 +73,9 @@
         android:alpha="0.8"
         android:background="#9B51A0"
         android:padding="7dp"
-        android:text="Jun 04, 2016"
+        android:text="@string/temp_movie_details_date"
         android:textColor="#FFF"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:textStyle="italic" />
 
 
@@ -109,7 +109,7 @@
             android:paddingRight="10dp"
             android:paddingTop="5dp"
             android:text="@string/temp_movie_details_rate"
-            android:textSize="35dp" />
+            android:textSize="35sp" />
 
         <TextView
             android:id="@+id/movie_details_title"
@@ -119,7 +119,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/movie_details_rating_bar"
             android:text="@string/temp_movie_details_title"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold"
             android:textColor="#4A3594" />
 

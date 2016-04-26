@@ -1,18 +1,45 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!-- Menu label to switch movies view to list -->
+    <string name="action_list_view">List View</string>
+    <!-- Menu label to switch movies view to grid -->
+    <string name="action_grid_view">Grid View</string>
+
+    <!-- Key name for storing order type (Popular Movies/Highest Rated) in SharedPreferences -->
+    <string name="pref_page_type" translatable="false">Page Type</string>
+
+    <!-- Value in SharedPreferences for order type option  -->
+    <string name="pref_page_type_popular_movies" translatable="false">Popular Movies</string>
+
+    <!-- Value in SharedPreferences for order type option  -->
+    <string name="pref_page_type_highest_rated" translatable="false">Highest Rated</string>
+
+    <!-- Key name for movies view mode (List/Grid) in SharedPreferences -->
+    <string name="pref_movies_view" translatable="false">Movies View Mode</string>
+
+    <!-- Value in SharedPreferences for movies view mode option  -->
+    <string name="pref_movies_view_list" translatable="false">List</string>
+
+    <!-- Value in SharedPreferences for movies view mode option  -->
+    <string name="pref_movies_view_grid" translatable="false">Grid</string>
+
+    <!-- Movie details activity title  -->
+    <string name="title_activity_movie_details">Movie Details</string>
+
+    <!-- Labels for Movie details title / description / rate / image loading / movie date   -->
+    <string name="temp_movie_details_title">Epsum factorial non deposit quid pro quo hic escorol.</string>
+    <string name="temp_movie_details_description">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. Souvlaki ignitus carborundum e pluribus unum. Defacto lingo est igpay atinlay. Marquee selectus non provisio incongruous feline nolo contendre. Gratuitous octopus niacin, sodium glutimate. Quote meon an estimate et non interruptus stadium.</string>
+    <string name="temp_movie_details_rate">4.0</string>
+    <string name="movies_view_loading_image">Loading..</string>
+    <string name="temp_movie_details_date">April 2016</string>
+    <string name="temp_movie_details_adult">+18</string>
+
+    <!-- Label for the ages (adult) -->
     <string name="movie_adult_plus_18">+18</string>
     <string name="movie_adult_all">+12</string>
 
-    <string name="pref_page_type">Page Type</string>
-    <string name="pref_page_type_popular_movies">Popular Movies</string>
-    <string name="pref_page_type_highest_rated">Highest Rated</string>
-    <string name="pref_movies_view">Movies View Mode</string>
-    <string name="pref_movies_view_list">List</string>
-    <string name="pref_movies_view_grid">Grid</string>
-    <string name="title_activity_movie_details">Movie Details</string>
-    <string name="temp_movie_details_description">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. Souvlaki ignitus carborundum e pluribus unum. Defacto lingo est igpay atinlay. Marquee selectus non provisio incongruous feline nolo contendre. Gratuitous octopus niacin, sodium glutimate. Quote meon an estimate et non interruptus stadium.</string>
-    <string name="temp_movie_details_title">Epsum factorial non deposit quid pro quo hic escorol.</string>
-    <string name="temp_movie_details_rate">4.0</string>
+    <!-- Label for single movie view image   -->
+    <string name="please_wait_loading_image">Please wait, Loading Image...</string>
 </resources>
