@@ -165,7 +165,7 @@ public class PopularMoviesFragment extends Fragment {
 
     private void createGridViewAdapter(){
         // MoviesAdapter will take the data from a the list and create the the ListView items
-        moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
+        moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext(), gridView);
         updateMoviesViewMode();
         gridView.setAdapter(moviesAdapter);
     }

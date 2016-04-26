@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -57,18 +58,21 @@ public class MoviesAdapter extends BaseAdapter {
 
     private int nextPage = 1;
 
+    private GridView gridView = null;
+
 
     private ArrayList<HashMap<String, String>> moviesData;
 
 
 
-    public MoviesAdapter(ArrayList<HashMap<String, String>> moviesListData, Activity a, Context context) {
+    public MoviesAdapter(ArrayList<HashMap<String, String>> moviesListData, Activity a, Context context, GridView gridView) {
         activity = a;
         mContext = context;
         moviesData = moviesListData;
         currentPage = nextPage = 1;
         inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         MOVIES_VIEW = mContext.getString(R.string.pref_movies_view_list);
+        this.gridView = gridView;
     }
 
     @Override
@@ -138,7 +142,7 @@ public class MoviesAdapter extends BaseAdapter {
 
         String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + IMAGE_SIZE + singleRow.get(HASH_MAP_KEY_IMAGE);
         Picasso.with(mContext).load(ImgURL).into(movieImage);
-
+        System.gc();
         return convertView;
     }
 
@@ -171,5 +175,26 @@ public class MoviesAdapter extends BaseAdapter {
     public void appendMovie(HashMap<String, String> newMovieData){
         moviesData.add(newMovieData);
     }
+
+    public void appendMovies(ArrayList<HashMap<String, String>> newMoviesData){
+        //int position = gridView.getFirstVisiblePosition();
+        if(newMoviesData != null) {
+            moviesData.addAll(newMoviesData);
+            /*for (int i = 0; i < newMoviesData.size(); i++) {
+                HashMap<String, String> movieData = newMoviesData.get(i);
+                moviesData.add(movieData);
+            }*/
+        }
+        //gridView.setSelection(201);
+        notifyDataSetChanged();
+        //gridView.clearFocus();
+        //gridView.setFocusable(true);
+
+        // Set position of the scroll
+        //gridView.setSelection(201);
+
+    }
+
+
 
 }

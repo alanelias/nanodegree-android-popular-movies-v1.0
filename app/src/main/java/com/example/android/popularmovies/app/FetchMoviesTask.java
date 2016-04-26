@@ -18,6 +18,7 @@
 
 package com.example.android.popularmovies.app;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -37,25 +38,30 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>> {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     private MoviesAdapter moviesAdapter;
     private final Context mContext;
 
+    private ProgressDialog dialog;
+
 
     public FetchMoviesTask(Context context, MoviesAdapter mMoviesAdapter) {
         mContext = context;
         moviesAdapter = mMoviesAdapter;
-
         Log.i(LOG_TAG, "FetchMoviesTask");
+        dialog = new ProgressDialog(context);
     }
 
-    protected boolean appendMoviesDataFromJsonToAdapter(String jsonString) throws JSONException {
+
+
+    protected ArrayList<HashMap<String, String>> appendMoviesDataFromJsonToAdapter(String jsonString) throws JSONException {
         // These are the names of the JSON objects that need to be extracted.
         final String OPM_LIST = "results";
         final String OPM_ID = "id";
@@ -68,6 +74,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         final String OPM_IMG = "poster_path";
         final String OPM_PAGE = "page";
 
+        ArrayList<HashMap<String, String>> moviesData = new ArrayList<HashMap<String, String>>();
+
         JSONObject moviesJson = new JSONObject(jsonString);
 
         int page = Integer.valueOf(moviesJson.getString(OPM_PAGE));
@@ -75,7 +83,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         // verify response page number and update the adapter page number
         if(page > 0){
             moviesAdapter.setCurrentPage(page);
-        } else return false;
+        } else return moviesData;
 
         JSONArray moviesArray = moviesJson.getJSONArray(OPM_LIST);
 
@@ -101,13 +109,15 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             mItem.put(MoviesAdapter.HASH_MAP_KEY_ADULT, movieAges);
             mItem.put(MoviesAdapter.HASH_MAP_KEY_LANG, movieRow.getString(OPM_LANG));
             mItem.put(MoviesAdapter.HASH_MAP_KEY_IMAGE, movieRow.getString(OPM_IMG));
-            moviesAdapter.appendMovie(mItem);
+
+            moviesData.add(mItem);
+            //moviesAdapter.appendMovie(mItem);
 
         }
         
         Log.i(LOG_TAG, "Count: " + String.valueOf(moviesAdapter.getCount()));
 
-        return true;
+        return moviesData;
     }
 
     private String beautifyDate(String movieDate){
@@ -136,7 +146,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
     }
 
     @Override
-    protected String[] doInBackground(String... params) {
+    protected ArrayList<HashMap<String, String>> doInBackground(String... params) {
         // verify page number
         if (params.length == 0) {
             return null;
@@ -217,7 +227,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         }
 
         try {
-            appendMoviesDataFromJsonToAdapter(moviesJsonStr);
+            return appendMoviesDataFromJsonToAdapter(moviesJsonStr);
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
@@ -228,10 +238,21 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
     }
 
     @Override
-    protected void onPostExecute(String[] strings) {
-        super.onPostExecute(strings);
-        
-        moviesAdapter.notifyDataSetChanged();
+    protected void onPostExecute(ArrayList<HashMap<String, String>> moviesData) {
+        super.onPostExecute(moviesData);
+        moviesAdapter.appendMovies(moviesData);
+
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        this.dialog.setMessage("Loading please wait..");
+        this.dialog.show();
 
     }
 }
