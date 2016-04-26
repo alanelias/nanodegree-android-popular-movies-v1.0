@@ -88,7 +88,7 @@ public class MovieDetailsFragment extends Fragment {
                     }
                 });
 
-                String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_SINGLE_VIEW_IMG_SIZE + mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_IMAGE);
+                String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_SINGLE_VIEW_IMG_SIZE + mMovieData.get(MoviesAdapter.HASH_MAP_KEY_IMAGE);
 
                 Picasso.with(getActivity().getApplicationContext()).load(ImgURL).into(movieImage, new com.squareup.picasso.Callback() {
                     @Override
@@ -102,12 +102,12 @@ public class MovieDetailsFragment extends Fragment {
                     }
                 });
 
-                movieTitle.setText(mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_TITLE));
-                movieDescription.setText(mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_DESCRIPTION));
+                movieTitle.setText(mMovieData.get(MoviesAdapter.HASH_MAP_KEY_TITLE));
+                movieDescription.setText(mMovieData.get(MoviesAdapter.HASH_MAP_KEY_DESCRIPTION));
 
-                movieDate.setText(mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_DATE));
+                movieDate.setText(mMovieData.get(MoviesAdapter.HASH_MAP_KEY_DATE));
 
-                String ratingValue = mMovieData.get(MoviesListAdapter.HASH_MAP_KEY_RATE);
+                String ratingValue = mMovieData.get(MoviesAdapter.HASH_MAP_KEY_RATE);
                 movieRate.setText(ratingValue);
                 movieRatingBar.setRating(Float.valueOf(ratingValue));
 

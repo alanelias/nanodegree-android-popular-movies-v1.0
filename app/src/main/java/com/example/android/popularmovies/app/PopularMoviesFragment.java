@@ -22,7 +22,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -31,19 +33,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by alaaelias on 4/23/16.
- */
 public class PopularMoviesFragment extends Fragment {
 
-    public MoviesListAdapter moviesListAdapter;
+    public MoviesAdapter moviesAdapter;
 
-    public static final int BROADCAST_TASK_CLEAN_LIST_AND_UPDATE = 999;
+    public static final int BROADCAST_TASK_CLEAN_LIST_AND_UPDATE = 900;
+    public static final int BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT = 901;
+
+    private GridView gridView;
 
     private final String LOG_TAG = PopularMovies.class.getSimpleName();
     /**
@@ -72,45 +74,53 @@ public class PopularMoviesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_popular_movies, container, false);
 
+
         // MoviesListAdapter will take the data from a the list and create the the ListView items
-        moviesListAdapter = new MoviesListAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
+        moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
 
         // get a refrance to ListView
-        final ListView listView = (ListView) rootView.findViewById(R.id.movies_list_view);
+        gridView = (GridView) rootView.findViewById(R.id.movies_list_view);
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener(){
+        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
             }
+
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if(scrollState == 0) {
-                    if(view.getCount() - view.getLastVisiblePosition() < 3 ){
-                        if(moviesListAdapter.getNextPage()==moviesListAdapter.getCurrentPage()) {
-                            moviesListAdapter.setNextPage();
-                            updateMovies(moviesListAdapter.getNextPage());
+                if (scrollState == 0) {
+                    if (view.getCount() - view.getLastVisiblePosition() < 3) {
+                        if (moviesAdapter.getNextPage() == moviesAdapter.getCurrentPage()) {
+                            moviesAdapter.setNextPage();
+                            updateMovies(moviesAdapter.getNextPage());
                         }
                     }
                 }
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), MovieDetails.class).putExtra(MovieDetails.INTENT_HASHMAP, moviesListAdapter.getItem(position));
+                Intent intent = new Intent(getActivity().getApplicationContext(), MovieDetails.class).putExtra(MovieDetails.INTENT_HASHMAP, moviesAdapter.getItem(position));
                 startActivity(intent);
             }
         });
 
 
+        updateMoviesViewMode();
+
         // attach adapter to listview
-        listView.setAdapter(moviesListAdapter);
+        gridView.setAdapter(moviesAdapter);
 
         return rootView;
     }
 
     private void updateMovies(int page) {
-        FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesListAdapter);
+        gridView.setNumColumns(1);
+        if(moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_grid))) {
+            gridView.setNumColumns(GridView.AUTO_FIT);
+        }
+        FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesAdapter);
         moviesTask.execute(String.valueOf(page));
     }
 
@@ -140,13 +150,29 @@ public class PopularMoviesFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
 
             final int task = intent.getIntExtra("pupular.movies.fragment", -1);
-            if(task == BROADCAST_TASK_CLEAN_LIST_AND_UPDATE) {
+            if (task == BROADCAST_TASK_CLEAN_LIST_AND_UPDATE) {
                 Log.i(LOG_TAG, "Task Received " + task);
 
-                moviesListAdapter.clearAdapter();
-                moviesListAdapter.notifyDataSetChanged();
+                moviesAdapter.clearAdapter();
+                moviesAdapter.notifyDataSetChanged();
+                updateMovies(1);
+            } else if (task == BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT) {
+//                updateMoviesViewMode();
+//                moviesAdapter.clearAdapter();
+                moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext());
+                updateMoviesViewMode();
+                gridView.setAdapter(moviesAdapter);
                 updateMovies(1);
             }
+
         }
     };
+
+    private void updateMoviesViewMode(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String moviesViewMode = sharedPreferences.getString(getString(R.string.pref_movies_view), getString(R.string.pref_movies_view_list));
+        moviesAdapter.MOVIES_VIEW = moviesViewMode;
+
+    }
+
 }

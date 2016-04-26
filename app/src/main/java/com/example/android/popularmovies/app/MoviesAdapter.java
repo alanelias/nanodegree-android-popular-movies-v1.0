@@ -21,7 +21,6 @@ package com.example.android.popularmovies.app;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +34,13 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MoviesListAdapter extends BaseAdapter {
+public class MoviesAdapter extends BaseAdapter {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-   
+    private Activity activity;
+    private Context mContext;
+    private static LayoutInflater inflater=null;
 
     public static final String HASH_MAP_KEY_ID = "id";
     public static final String HASH_MAP_KEY_TITLE = "title";
@@ -50,22 +51,24 @@ public class MoviesListAdapter extends BaseAdapter {
     public static final String HASH_MAP_KEY_ADULT = "adult";
     public static final String HASH_MAP_KEY_LANG = "lang";
 
+    public String MOVIES_VIEW = "";
+
     private int currentPage = 1;
+
     private int nextPage = 1;
 
 
     private ArrayList<HashMap<String, String>> moviesData;
 
-    private Activity activity;
-    private Context mContext;
-    private static LayoutInflater inflater=null;
 
-    public MoviesListAdapter(ArrayList<HashMap<String, String>> moviesListData, Activity a, Context context) {
+
+    public MoviesAdapter(ArrayList<HashMap<String, String>> moviesListData, Activity a, Context context) {
         activity = a;
         mContext = context;
         moviesData = moviesListData;
         currentPage = nextPage = 1;
         inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        MOVIES_VIEW = mContext.getString(R.string.pref_movies_view_list);
     }
 
     @Override
@@ -90,38 +93,52 @@ public class MoviesListAdapter extends BaseAdapter {
 
         singleRow = moviesData.get(position);
 
-        View v = inflater.inflate(R.layout.movie_list_row, null);
+        int moviesViewLayout = R.layout.movie_list_row;
+
+        if(MOVIES_VIEW.equalsIgnoreCase(mContext.getString(R.string.pref_movies_view_grid))) {
+            moviesViewLayout = R.layout.movie_grid_row;
+        }
+
+        View v = inflater.inflate(moviesViewLayout, null);
         if(convertView==null) {
             convertView = v;
         }
 
+        TextView movieTitle, movieDesciption, movieDate, movieAdult, movieRate;
+        ImageView movieImage;
 
+        String IMAGE_SIZE = BuildConfig.THE_MOVIE_DB_API_GRID_VIEW_IMG_SIZE;
 
-        TextView movieTitle = (TextView) convertView.findViewById(R.id.movie_row_title); // movie title
-        TextView movieDesciption = (TextView) convertView.findViewById(R.id.movie_row_description); // movie description
-
-        TextView movieDate = (TextView) convertView.findViewById(R.id.movie_row_date); // movie date
-
-        ImageView movieImage= (ImageView) convertView.findViewById(R.id.movie_row_image); // movie image
-        TextView movieAdult = (TextView) convertView.findViewById(R.id.movie_row_adult); // movie adult status
+        movieImage= (ImageView) convertView.findViewById(R.id.movie_row_image); // movie image
 
         RatingBar movieRatingBar = (RatingBar) convertView.findViewById(R.id.movie_rating_bar); // movie rating bar
-        TextView movieRate = (TextView) convertView.findViewById(R.id.movie_row_rate); // movie rate
 
-        movieTitle.setText(singleRow.get(HASH_MAP_KEY_TITLE));
-        movieDesciption.setText(singleRow.get(HASH_MAP_KEY_DESCRIPTION));
+        movieDate = (TextView) convertView.findViewById(R.id.movie_row_date); // movie date
+
+        String ratingValue = singleRow.get(HASH_MAP_KEY_RATE);
+
+        movieRatingBar.setRating(Float.valueOf(ratingValue));
 
         movieDate.setText(singleRow.get(HASH_MAP_KEY_DATE));
 
-        String ratingValue = singleRow.get(HASH_MAP_KEY_RATE);
-        movieRatingBar.setRating(Float.valueOf(ratingValue));
-        movieRate.setText(ratingValue);
+        if(moviesViewLayout == R.layout.movie_list_row) {
+            movieTitle = (TextView) convertView.findViewById(R.id.movie_row_title); // movie title
+            movieDesciption = (TextView) convertView.findViewById(R.id.movie_row_description); // movie description
+            movieAdult = (TextView) convertView.findViewById(R.id.movie_row_adult); // movie adult status
+            movieRate = (TextView) convertView.findViewById(R.id.movie_row_rate); // movie rate
 
-        movieAdult.setText(singleRow.get(HASH_MAP_KEY_ADULT));
+            movieTitle.setText(singleRow.get(HASH_MAP_KEY_TITLE));
+            movieDesciption.setText(singleRow.get(HASH_MAP_KEY_DESCRIPTION));
 
-        String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + BuildConfig.THE_MOVIE_DB_API_LIST_VIEW_IMG_SIZE + singleRow.get(HASH_MAP_KEY_IMAGE);
-        Log.i(LOG_TAG, ImgURL);
+            movieAdult.setText(singleRow.get(HASH_MAP_KEY_ADULT));
+            movieRate.setText(ratingValue);
+
+            IMAGE_SIZE = BuildConfig.THE_MOVIE_DB_API_LIST_VIEW_IMG_SIZE;
+        }
+
+        String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + IMAGE_SIZE + singleRow.get(HASH_MAP_KEY_IMAGE);
         Picasso.with(mContext).load(ImgURL).into(movieImage);
+
         return convertView;
     }
 

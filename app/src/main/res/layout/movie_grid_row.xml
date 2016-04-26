@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:padding="5dip">
+
+    <TextView
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:cropToPadding="false"
+        android:text="Loading.."
+        android:textAlignment="center"
+        android:textColor="#3399ff"
+        android:textSize="8dp" />
+
+    <ImageView
+        android:id="@+id/movie_row_image"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:minHeight="200dp"
+        android:scaleType="fitCenter"
+        android:src="@android:drawable/sym_def_app_icon" />
+
+    <LinearLayout
+        android:id="@+id/movie_row_rate_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false"
+        android:alpha="0.9"
+        android:background="#FFFF"
+        android:gravity="bottom|center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <RatingBar
+            android:id="@+id/movie_rating_bar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:isIndicator="true"
+            android:numStars="5"
+            android:stepSize="0.5" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/movie_row_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="April 2016"
+        android:textColor="#000"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/movie_row_image"
+        android:layout_alignRight="@+id/movie_row_image"
+        android:layout_alignEnd="@+id/movie_row_image"
+        android:padding="5dp"
+        android:background="#FFF"
+        android:alpha="0.8" />
+
+</RelativeLayout>

@@ -102,9 +102,7 @@ public class PopularMovies extends AppCompatActivity {
                         break;
                 }
                 editor.commit();
-                Intent intentData = new Intent("fragment.tasks");
-                intentData.putExtra("pupular.movies.fragment", PopularMoviesFragment.BROADCAST_TASK_CLEAN_LIST_AND_UPDATE);
-                LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(intentData);
+                sendTaskToFragment(PopularMoviesFragment.BROADCAST_TASK_CLEAN_LIST_AND_UPDATE);
             }
 
             // This method will be invoked when the current page is scrolled
@@ -141,11 +139,32 @@ public class PopularMovies extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_view_grid) {
+            changeMoviesView(getString(R.string.pref_movies_view_grid));
+            return true;
+        }else if(id == R.id.action_view_list) {
+            changeMoviesView(getString(R.string.pref_movies_view_list));
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sendTaskToFragment(int taskName){
+        Intent intentData = new Intent("fragment.tasks");
+        intentData.putExtra("pupular.movies.fragment", taskName);
+        LocalBroadcastManager.getInstance(mContext.getApplicationContext()).sendBroadcast(intentData);
+    }
+
+    private  void changeMoviesView(String viewMode){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplication());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putString(getString(R.string.pref_movies_view), viewMode);
+        Log.i(LOG_TAG, viewMode);
+
+        editor.commit();
+        sendTaskToFragment(PopularMoviesFragment.BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT);
     }
 
 

@@ -8,6 +8,9 @@
     <string name="pref_page_type">Page Type</string>
     <string name="pref_page_type_popular_movies">Popular Movies</string>
     <string name="pref_page_type_highest_rated">Highest Rated</string>
+    <string name="pref_movies_view">Movies View Mode</string>
+    <string name="pref_movies_view_list">List</string>
+    <string name="pref_movies_view_grid">Grid</string>
     <string name="title_activity_movie_details">Movie Details</string>
     <string name="temp_movie_details_description">Epsum factorial non deposit quid pro quo hic escorol. Olypian quarrels et gorilla congolium sic ad nauseum. Souvlaki ignitus carborundum e pluribus unum. Defacto lingo est igpay atinlay. Marquee selectus non provisio incongruous feline nolo contendre. Gratuitous octopus niacin, sodium glutimate. Quote meon an estimate et non interruptus stadium.</string>
     <string name="temp_movie_details_title">Epsum factorial non deposit quid pro quo hic escorol.</string>
