@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,14 +39,19 @@ import java.util.HashMap;
 
 public class PopularMoviesFragment extends Fragment {
 
+    // referance to grid view adapter
     public MoviesAdapter moviesAdapter;
 
+    // declare broadcast tasks
     public static final int BROADCAST_TASK_CLEAN_LIST_AND_UPDATE = 900;
     public static final int BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT = 901;
 
+    // reference to gridview
     private GridView gridView;
 
+    // define log tag
     private final String LOG_TAG = PopularMovies.class.getSimpleName();
+
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -74,9 +78,10 @@ public class PopularMoviesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_popular_movies, container, false);
 
-        // get a refrance to ListView
-        gridView = (GridView) rootView.findViewById(R.id.movies_list_view);
+        // get a reference to ListView
+        gridView = (GridView) rootView.findViewById(R.id.movies_grid_view);
 
+        // add on scroll listener to the grid view
         gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
@@ -84,9 +89,14 @@ public class PopularMoviesFragment extends Fragment {
 
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == 0) {
+                    // before 2 last items witch are in the view port of the screen
+                    // we add page to the adapter counter to request data
                     if (view.getCount() - view.getLastVisiblePosition() < 3) {
+                        // if the current page = the next page that means
+                        // its loading so we avoid send request again
                         if (moviesAdapter.getNextPage() == moviesAdapter.getCurrentPage()) {
                             moviesAdapter.setNextPage();
+                            // get movies from api by page
                             updateMovies(moviesAdapter.getNextPage());
                         }
                     }
@@ -97,6 +107,10 @@ public class PopularMoviesFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // when movie row clicked start the single movie details activity
+                // and we pass the selected hashmap item to the details activity
+                // via Intent
                 Intent intent = new Intent(getActivity().getApplicationContext(), MovieDetails.class).putExtra(MovieDetails.INTENT_HASHMAP, moviesAdapter.getItem(position));
                 startActivity(intent);
             }
@@ -108,14 +122,19 @@ public class PopularMoviesFragment extends Fragment {
         return rootView;
     }
 
+    // to fetch movies from api by page
     private void updateMovies(int page) {
 
-        if(moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_grid))) {
+        // check the movie view mode and change the grid columns numbers in one row
+        if (moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_grid))) {
             gridView.setNumColumns(GridView.AUTO_FIT);
-        }else if(moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_list))) {
+        } else if (moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_list))) {
             gridView.setNumColumns(1);
         }
+
+        // run background task and fetch from api data
         FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesAdapter);
+
         moviesTask.execute(String.valueOf(page));
     }
 
@@ -128,16 +147,18 @@ public class PopularMoviesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        // register the broadcast receiver
         IntentFilter fragmentTaskFilter = new IntentFilter("fragment.tasks");
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(popularMoviesFragmentBCReceiver, fragmentTaskFilter);
-        Log.i(LOG_TAG, "registerReceiver");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        // register the broadcast receiver
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(popularMoviesFragmentBCReceiver);
-        Log.i(LOG_TAG, "unregisterReceiver");
     }
 
     private BroadcastReceiver popularMoviesFragmentBCReceiver = new BroadcastReceiver() {
@@ -146,29 +167,45 @@ public class PopularMoviesFragment extends Fragment {
 
             final int task = intent.getIntExtra("pupular.movies.fragment", -1);
             if (task == BROADCAST_TASK_CLEAN_LIST_AND_UPDATE) {
+
                 // recreate and attach adapter to gridview
                 createGridViewAdapter();
+
+                // reload the gridview with data from api
                 updateMovies(1);
+
             } else if (task == BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT) {
+
                 // recreate and attach adapter to gridview
                 createGridViewAdapter();
+
+                // reload the gridview with data from api
                 updateMovies(1);
             }
 
         }
     };
 
-    private void updateMoviesViewMode(){
+    // get the saved value from sharedPreferences
+    private void updateMoviesViewMode() {
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         String moviesViewMode = sharedPreferences.getString(getString(R.string.pref_movies_view), getString(R.string.pref_movies_view_list));
+
+        // update the value inside the adapter
         moviesAdapter.MOVIES_VIEW = moviesViewMode;
 
     }
 
-    private void createGridViewAdapter(){
+
+    private void createGridViewAdapter() {
+
         // MoviesAdapter will take the data from a the list and create the the ListView items
         moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext(), gridView);
+
         updateMoviesViewMode();
+
+        // attach adapter to gridview
         gridView.setAdapter(moviesAdapter);
     }
 
