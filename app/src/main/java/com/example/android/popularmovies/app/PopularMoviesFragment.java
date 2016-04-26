@@ -109,9 +109,11 @@ public class PopularMoviesFragment extends Fragment {
     }
 
     private void updateMovies(int page) {
-        gridView.setNumColumns(1);
+
         if(moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_grid))) {
             gridView.setNumColumns(GridView.AUTO_FIT);
+        }else if(moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_list))) {
+            gridView.setNumColumns(1);
         }
         FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesAdapter);
         moviesTask.execute(String.valueOf(page));
