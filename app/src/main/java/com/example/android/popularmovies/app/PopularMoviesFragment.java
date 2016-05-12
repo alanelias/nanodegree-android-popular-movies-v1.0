@@ -27,12 +27,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class PopularMoviesFragment extends Fragment {
     public static final int BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT = 901;
 
     // reference to gridview
-    private GridView gridView;
+    private RecyclerView gridView;
 
     // define log tag
     private final String LOG_TAG = PopularMovies.class.getSimpleName();
@@ -59,81 +60,56 @@ public class PopularMoviesFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     public PopularMoviesFragment() {
+        //Log.i(LOG_TAG, "PopularMoviesFragment");
     }
 
     /**
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static PopularMoviesFragment newInstance(int sectionNumber) {
-        PopularMoviesFragment fragment = new PopularMoviesFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    //public static PopularMoviesFragment newInstance(int sectionNumber) {
+    //    PopularMoviesFragment fragment = new PopularMoviesFragment();
+    //    Bundle args = new Bundle();
+    //    args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+    //    fragment.setArguments(args);
+    //    return fragment;
+    //}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_popular_movies, container, false);
+                              Bundle savedInstanceState) {
+        //View rootView = inflater.inflate(R.layout.fragment_popular_movies, container, false);
+        gridView = (RecyclerView) inflater.inflate(
+                R.layout.fragment_popular_movies, container, false);
 
-        // get a reference to ListView
-        gridView = (GridView) rootView.findViewById(R.id.movies_grid_view);
 
-        // add on scroll listener to the grid view
-        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
-            }
-
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == 0) {
-                    // before 2 last items witch are in the view port of the screen
-                    // we add page to the adapter counter to request data
-                    if (view.getCount() - view.getLastVisiblePosition() < 3) {
-                        // if the current page = the next page that means
-                        // its loading so we avoid send request again
-                        if (moviesAdapter.getNextPage() == moviesAdapter.getCurrentPage()) {
-                            moviesAdapter.setNextPage();
-                            // get movies from api by page
-                            updateMovies(moviesAdapter.getNextPage());
-                        }
-                    }
-                }
-            }
-        });
-
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                // when movie row clicked start the single movie details activity
-                // and we pass the selected hashmap item to the details activity
-                // via Intent
-                Intent intent = new Intent(getActivity().getApplicationContext(), MovieDetails.class).putExtra(MovieDetails.INTENT_HASHMAP, moviesAdapter.getItem(position));
-                startActivity(intent);
-            }
-        });
-
-        // create and attach adapter to gridview
         createGridViewAdapter();
 
-        return rootView;
+        updateMoviesViewLayout();
+
+        updateAppTitle();
+
+        return gridView;
+    }
+
+    // to fetch movies from api by page
+    private void updateMoviesViewLayout() {
+
+        if (moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_grid))) {
+            gridView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
+        }else if (moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_list))) {
+            gridView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        }
     }
 
     // to fetch movies from api by page
     private void updateMovies(int page) {
 
-        // check the movie view mode and change the grid columns numbers in one row
-        if (moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_grid))) {
-            gridView.setNumColumns(GridView.AUTO_FIT);
-        } else if (moviesAdapter.MOVIES_VIEW.equalsIgnoreCase(getString(R.string.pref_movies_view_list))) {
-            gridView.setNumColumns(1);
-        }
+        updateMoviesViewLayout();
 
         // run background task and fetch from api data
-        FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesAdapter);
+        FetchMoviesTask moviesTask = new FetchMoviesTask(getContext(), moviesAdapter, gridView);
 
         moviesTask.execute(String.valueOf(page));
     }
@@ -173,6 +149,8 @@ public class PopularMoviesFragment extends Fragment {
 
                 // reload the gridview with data from api
                 updateMovies(1);
+                
+                updateAppTitle();
 
             } else if (task == BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT) {
 
@@ -181,6 +159,8 @@ public class PopularMoviesFragment extends Fragment {
 
                 // reload the gridview with data from api
                 updateMovies(1);
+
+                updateAppTitle();
             }
 
         }
@@ -201,12 +181,21 @@ public class PopularMoviesFragment extends Fragment {
     private void createGridViewAdapter() {
 
         // MoviesAdapter will take the data from a the list and create the the ListView items
-        moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getActivity(), getContext(), gridView);
+        moviesAdapter = new MoviesAdapter(new ArrayList<HashMap<String, String>>(), getContext());
 
         updateMoviesViewMode();
 
         // attach adapter to gridview
         gridView.setAdapter(moviesAdapter);
+    }
+
+    private void updateAppTitle(){
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        // get the value of Order type (Page type) (Popular Movies = 0 / Highest Rated = 1)
+        String pageType = sharedPreferences.getString(getContext().getString(R.string.pref_page_type), getContext().getString(R.string.pref_page_type_popular_movies));
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(pageType);
     }
 
 }

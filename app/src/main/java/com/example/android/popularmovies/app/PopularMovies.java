@@ -71,8 +71,12 @@ public class PopularMovies extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
 
+        if (mViewPager != null) {
+            setupViewPager(mViewPager);
+        }
 
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        //mViewPager.setAdapter(mSectionsPagerAdapter);
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -188,6 +192,14 @@ public class PopularMovies extends AppCompatActivity {
 
         // send broadcast message to fragment to update the UI
         sendTaskToFragment(PopularMoviesFragment.BROADCAST_TASK_UPDATE_FRAGMENT_LAYOUT);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager(), getApplicationContext());
+        adapter.addFragment(new PopularMoviesFragment(), getString(R.string.pref_page_type_popular_movies));
+        adapter.addFragment(new PopularMoviesFragment(), getString(R.string.pref_page_type_highest_rated));
+        //adapter.addFragment(new CheeseListFragment(), "Category 3");
+        viewPager.setAdapter(adapter);
     }
 
 

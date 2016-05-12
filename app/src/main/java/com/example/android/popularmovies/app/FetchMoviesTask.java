@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -57,10 +58,13 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
     private ProgressDialog dialog;
 
 
-    public FetchMoviesTask(Context context, MoviesAdapter mMoviesAdapter) {
+    private RecyclerView recyclerView;
+
+    public FetchMoviesTask(Context context, MoviesAdapter mMoviesAdapter, RecyclerView recyclerView) {
         mContext = context;
         moviesAdapter = mMoviesAdapter;
         dialog = new ProgressDialog(context);
+        this.recyclerView = recyclerView;
     }
 
 
@@ -246,6 +250,11 @@ public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<HashMap<S
 
         // add the new data to adapter
         moviesAdapter.appendMovies(moviesData);
+
+        //recyclerView.setAdapter(new MoviesAdapter(moviesData, mContext));
+        //moviesAdapter.notifyDataSetChanged();
+
+        Log.i(LOG_TAG, "-----------------" + moviesData.size());
 
         // dismiss waiting message
         if (dialog.isShowing()) {

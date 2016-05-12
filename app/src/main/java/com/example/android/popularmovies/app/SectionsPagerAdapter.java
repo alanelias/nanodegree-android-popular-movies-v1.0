@@ -23,6 +23,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by alaaelias on 4/23/16.
  */
@@ -34,34 +37,40 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
 
+    private final List<Fragment> mFragments = new ArrayList<>();
+    private final List<String> mFragmentTitles = new ArrayList<>();
+
     public SectionsPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         mContext = context;
     }
 
+    public SectionsPagerAdapter(FragmentManager supportFragmentManager) {
+        super(supportFragmentManager);
+    }
+
+
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
-        return PopularMoviesFragment.newInstance(position + 1);
+        return mFragments.get(position);
     }
 
     @Override
     public int getCount() {
         // Show 3 total pages.
-        return 2;
+        return mFragments.size();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case PAGE_MOST_POPULAR:
-                return mContext.getString(R.string.pref_page_type_popular_movies);
-            case PAGE_TOP_RELATED:
-                return mContext.getString(R.string.pref_page_type_highest_rated);
-        }
-        return null;
+        return mFragmentTitles.get(position);
     }
 
 
+    public void addFragment(PopularMoviesFragment popularMoviesFragment, String title) {
+        mFragments.add(popularMoviesFragment);
+        mFragmentTitles.add(title);
+    }
 }

@@ -1,130 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout android:layout_height="wrap_content"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="5dip">
+    android:padding="5dip"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
         android:id="@+id/movie_row_thumbnail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_height="wrap_content"
         android:layout_marginRight="5dip"
+        android:layout_width="wrap_content"
         android:padding="3dip">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/loading"
             android:cropToPadding="false"
-            android:text="@string/movies_view_loading_image"
-            android:textSize="8sp"
-            android:textColor="@color/colorPrimaryDark"
-            android:layout_alignParentTop="true"
+            android:gravity="center_vertical"
+            android:id="@+id/loading"
+            android:layout_alignEnd="@+id/movie_row_image"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
             android:layout_alignRight="@+id/movie_row_image"
-            android:layout_alignEnd="@+id/movie_row_image"
-            android:gravity="center_vertical" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:text="@string/movies_view_loading_image"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="8sp" />
 
         <ImageView
             android:id="@+id/movie_row_image"
-            android:layout_width="50dip"
             android:layout_height="60dip"
-            android:src="@android:drawable/sym_def_app_icon"
-            android:scaleType="centerCrop" />
+            android:layout_width="50dip"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/sym_def_app_icon" />
 
         <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/movie_row_adult"
-        android:cropToPadding="false"
-        android:text="@string/temp_movie_details_adult"
-        android:textSize="10sp"
-        android:textColor="@color/colorWhite"
-        android:background="#4A3594"
-        android:alpha="0.6"
+            android:alpha="0.6"
+            android:background="#4A3594"
+            android:cropToPadding="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/movie_row_adult"
             android:layout_alignBottom="@+id/movie_row_image"
-            android:layout_alignRight="@+id/movie_row_image"
             android:layout_alignEnd="@+id/movie_row_image"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:gravity="center_vertical|center_horizontal" />
+            android:layout_alignRight="@+id/movie_row_image"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/temp_movie_details_adult"
+            android:textColor="@color/colorWhite"
+            android:textSize="10sp" />
 
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/movie_row_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:ellipsize="end"
+        android:id="@+id/movie_row_title"
+        android:layout_alignEnd="@+id/movie_row_description"
+        android:layout_alignRight="@+id/movie_row_description"
+        android:layout_alignTop="@+id/movie_row_thumbnail"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/movie_row_thumbnail"
+        android:layout_width="wrap_content"
         android:singleLine="true"
         android:text="@string/temp_movie_details_title"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="15sp"
         android:textStyle="bold"
-        android:typeface="sans"
-        android:layout_alignTop="@+id/movie_row_thumbnail"
-        android:layout_toRightOf="@+id/movie_row_thumbnail"
-        android:layout_alignRight="@+id/movie_row_description"
-        android:layout_alignEnd="@+id/movie_row_description" />
+        android:typeface="sans" />
 
     <TextView
-        android:id="@+id/movie_row_description"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/movie_row_title"
-        android:layout_toRightOf="@+id/movie_row_thumbnail"
         android:ellipsize="end"
+        android:gravity="left"
+        android:id="@+id/movie_row_description"
+        android:layout_above="@+id/movie_row_date"
+        android:layout_below="@id/movie_row_title"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/movie_row_thumbnail"
+        android:layout_toRightOf="@+id/movie_row_thumbnail"
+        android:layout_width="fill_parent"
+        android:lines="2"
+        android:maxLines="2"
         android:text="@string/temp_movie_details_description"
         android:textColor="@color/colorBlack"
-        android:textSize="10sp"
-        android:lines="2"
-        android:gravity="left"
-        android:layout_above="@+id/movie_row_date"
-        android:maxLines="2"
-        android:layout_toEndOf="@id/movie_row_thumbnail" />
+        android:textSize="10sp" />
 
     <RatingBar
-        android:id="@+id/movie_rating_bar"
         style="@style/ratingBarSmall"
+        android:id="@+id/movie_rating_bar"
         android:layout_below="@+id/movie_row_description"
-        android:layout_toRightOf="@+id/movie_row_thumbnail"
-        android:layout_toEndOf="@+id/movie_row_thumbnail" />
+        android:layout_toEndOf="@+id/movie_row_thumbnail"
+        android:layout_toRightOf="@+id/movie_row_thumbnail" />
 
     <TextView
-        android:id="@+id/movie_row_rate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:gravity="right"
+        android:id="@+id/movie_row_rate"
+        android:layout_below="@+id/movie_row_description"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@id/movie_rating_bar"
+        android:layout_width="wrap_content"
         android:text="@string/temp_movie_details_rate"
         android:textColor="@color/colorPrimary"
         android:textSize="13sp"
-        android:textStyle="bold"
-        android:layout_below="@+id/movie_row_description"
-        android:layout_toEndOf="@id/movie_rating_bar"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp" />
+        android:textStyle="bold" />
 
     <TextView
+        android:gravity="right"
         android:id="@+id/movie_row_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/movie_row_thumbnail"
         android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="false"
         android:layout_alignParentRight="true"
         android:layout_alignWithParentIfMissing="false"
         android:layout_centerHorizontal="false"
         android:layout_centerInParent="false"
         android:layout_centerVertical="false"
-        android:gravity="right"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
         android:text="@string/temp_movie_details_date"
         android:textColor="@color/colorPrimary"
         android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/movie_row_thumbnail" />
+        android:textStyle="bold" />
 
 </RelativeLayout>

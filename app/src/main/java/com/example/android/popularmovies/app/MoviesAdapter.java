@@ -19,13 +19,12 @@
 package com.example.android.popularmovies.app;
 
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -35,15 +34,38 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class MoviesAdapter extends BaseAdapter {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.CustomViewHolder> {
 
-    private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
-
-    private Activity activity;
+    protected final String LOG_TAG = MoviesAdapter.class.getSimpleName();
 
     private Context mContext;
 
     private static LayoutInflater inflater=null;
+
+    public static class CustomViewHolder extends RecyclerView.ViewHolder {
+
+        public final View mView;
+        public final TextView movieTitle, movieDesciption, movieDate, movieAdult, movieRate;
+        public final ImageView movieImage;
+        public final RatingBar movieRatingBar;
+
+        public CustomViewHolder(View view) {
+            super(view);
+            mView = view;
+            movieTitle = (TextView) view.findViewById(R.id.movie_row_title); // movie title
+            movieDesciption = (TextView) view.findViewById(R.id.movie_row_description); // movie description
+            movieDate = (TextView) view.findViewById(R.id.movie_row_date); // movie date
+            movieAdult = (TextView) view.findViewById(R.id.movie_row_adult); // movie adult
+            movieRate = (TextView) view.findViewById(R.id.movie_row_rate); // movie rate
+            movieImage = (ImageView) view.findViewById(R.id.movie_row_image); // movie image
+            movieRatingBar = (RatingBar) view.findViewById(R.id.movie_rating_bar); // movie rating bar
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + " '" + movieTitle.getText();
+        }
+    }
 
     public static final String HASH_MAP_KEY_ID = "id";
     public static final String HASH_MAP_KEY_TITLE = "title";
@@ -60,32 +82,84 @@ public class MoviesAdapter extends BaseAdapter {
 
     private int nextPage = 1;
 
-    private GridView gridView = null;
-
 
     private ArrayList<HashMap<String, String>> moviesData;
 
 
 
-    public MoviesAdapter(ArrayList<HashMap<String, String>> moviesListData, Activity a, Context context, GridView gridView) {
-        activity = a;
+    public MoviesAdapter(ArrayList<HashMap<String, String>> moviesListData, Context context) {
         mContext = context;
         moviesData = moviesListData;
         currentPage = nextPage = 1;
-        inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         MOVIES_VIEW = mContext.getString(R.string.pref_movies_view_list);
-        this.gridView = gridView;
     }
 
-    @Override
+
     public int getCount() {
         return moviesData.size();
     }
 
-    @Override
+
     public HashMap<String, String> getItem(int position) {
         return moviesData.get(position);
     }
+
+    @Override
+    public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(getItemsLayout(), parent, false);
+        //View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, null);
+        //view.setBackgroundResource(mBackground);
+        return new CustomViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(CustomViewHolder holder, int position) {
+        //holder.mBoundString = moviesData.get(position);
+        HashMap<String, String> currentItem = getItem(position);
+
+
+
+//        holder.mView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Context context = v.getContext();
+//                Intent intent = new Intent(context, CheeseDetailActivity.class);
+//                intent.putExtra(CheeseDetailActivity.EXTRA_NAME, holder.mBoundString);
+//
+//                context.startActivity(intent);
+//            }
+//        });
+        if(holder.movieTitle != null)
+        holder.movieTitle.setText(currentItem.get(HASH_MAP_KEY_TITLE)); // movie title
+        if(holder.movieDesciption != null)
+        holder.movieDesciption.setText(currentItem.get(HASH_MAP_KEY_DESCRIPTION)); // movie description
+        if(holder.movieAdult != null)
+        holder.movieAdult.setText(currentItem.get(HASH_MAP_KEY_ADULT));; // movie adult status
+        if(holder.movieDate != null)
+        holder.movieDate.setText(currentItem.get(HASH_MAP_KEY_DATE)); // movie date
+        String ratingValue = currentItem.get(HASH_MAP_KEY_RATE); // rate value
+        if(holder.movieRate != null)
+        holder.movieRate.setText(ratingValue); // movie rate text
+        holder.movieRatingBar.setRating(Float.valueOf(ratingValue)); // movie rate bar
+
+        // movie image
+        String IMAGE_SIZE = BuildConfig.THE_MOVIE_DB_API_GRID_VIEW_IMG_SIZE;
+        String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + IMAGE_SIZE + currentItem.get(HASH_MAP_KEY_IMAGE);
+        Picasso.with(mContext).load(ImgURL).into(holder.movieImage);
+        //System.gc();
+
+    }
+
+    private int getItemsLayout(){
+        int moviesViewLayout = R.layout.movie_list_row;
+        if(MOVIES_VIEW.equalsIgnoreCase(mContext.getString(R.string.pref_movies_view_grid))) {
+            moviesViewLayout = R.layout.movie_grid_row;
+        }
+        return moviesViewLayout;
+    }
+
 
     @Override
     public long getItemId(int position) {
@@ -93,62 +167,9 @@ public class MoviesAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        HashMap<String, String> singleRow = new HashMap<String, String>();
-
-        singleRow = moviesData.get(position);
-
-        int moviesViewLayout = R.layout.movie_list_row;
-
-        if(MOVIES_VIEW.equalsIgnoreCase(mContext.getString(R.string.pref_movies_view_grid))) {
-            moviesViewLayout = R.layout.movie_grid_row;
-        }
-
-        View v = inflater.inflate(moviesViewLayout, null);
-        if(convertView==null) {
-            convertView = v;
-        }
-
-        TextView movieTitle, movieDesciption, movieDate, movieAdult, movieRate;
-        ImageView movieImage;
-
-        String IMAGE_SIZE = BuildConfig.THE_MOVIE_DB_API_GRID_VIEW_IMG_SIZE;
-
-        movieImage= (ImageView) convertView.findViewById(R.id.movie_row_image); // movie image
-
-        RatingBar movieRatingBar = (RatingBar) convertView.findViewById(R.id.movie_rating_bar); // movie rating bar
-
-        movieDate = (TextView) convertView.findViewById(R.id.movie_row_date); // movie date
-
-        String ratingValue = singleRow.get(HASH_MAP_KEY_RATE);
-
-        movieRatingBar.setRating(Float.valueOf(ratingValue));
-
-        movieDate.setText(singleRow.get(HASH_MAP_KEY_DATE));
-
-        // check the view mode if list we have to show more information
-        if(moviesViewLayout == R.layout.movie_list_row) {
-            movieTitle = (TextView) convertView.findViewById(R.id.movie_row_title); // movie title
-            movieDesciption = (TextView) convertView.findViewById(R.id.movie_row_description); // movie description
-            movieAdult = (TextView) convertView.findViewById(R.id.movie_row_adult); // movie adult status
-            movieRate = (TextView) convertView.findViewById(R.id.movie_row_rate); // movie rate
-
-            movieTitle.setText(singleRow.get(HASH_MAP_KEY_TITLE));
-            movieDesciption.setText(singleRow.get(HASH_MAP_KEY_DESCRIPTION));
-
-            movieAdult.setText(singleRow.get(HASH_MAP_KEY_ADULT));
-            movieRate.setText(ratingValue);
-
-            IMAGE_SIZE = BuildConfig.THE_MOVIE_DB_API_LIST_VIEW_IMG_SIZE;
-        }
-
-        String ImgURL = BuildConfig.THE_MOVIE_DB_API_IMAGES_BASE_URL + IMAGE_SIZE + singleRow.get(HASH_MAP_KEY_IMAGE);
-        Picasso.with(mContext).load(ImgURL).into(movieImage);
-        System.gc();
-        return convertView;
+    public int getItemCount() {
+        return moviesData.size();
     }
-
 
 
     public void clearAdapter(){
@@ -182,7 +203,7 @@ public class MoviesAdapter extends BaseAdapter {
 
     // add movies data
     public void appendMovies(ArrayList<HashMap<String, String>> newMoviesData){
-
+        Log.i(LOG_TAG, "-----------------" + moviesData.size());
         if(newMoviesData != null) {
             moviesData.addAll(newMoviesData);
             /*for (int i = 0; i < newMoviesData.size(); i++) {
