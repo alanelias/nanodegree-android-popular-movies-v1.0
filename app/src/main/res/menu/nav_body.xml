@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="@string/pref_page_type_popular_movies" />
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="@string/pref_page_type_highest_rated" />
+        <item
+            android:id="@+id/nav_friends"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="My Favorite Movies" />
+        <item
+            android:id="@+id/nav_discussion"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="Settings" />
+    </group>
+
+    <item android:title="Last Sync: jun 10, 2016 10:01pm">
+        <menu>
+            <item
+                android:icon="@android:drawable/stat_notify_sync"
+                android:title="Sync" />
+        </menu>
+    </item>
+
+</menu>

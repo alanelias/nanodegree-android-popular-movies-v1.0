@@ -23,10 +23,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -51,6 +55,8 @@ public class PopularMovies extends AppCompatActivity {
     // define log tag
     private final String LOG_TAG = PopularMovies.class.getSimpleName();
 
+    private DrawerLayout mDrawerLayout;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -63,6 +69,19 @@ public class PopularMovies extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_view_grid);
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            setupDrawerContent(navigationView);
+        }
+
+
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -168,6 +187,8 @@ public class PopularMovies extends AppCompatActivity {
             changeMoviesView(getString(R.string.pref_movies_view_list));
 
             return true;
+        }else if(id == android.R.id.home){
+            mDrawerLayout.openDrawer(GravityCompat.START);
         }
 
         return super.onOptionsItemSelected(item);
@@ -200,6 +221,18 @@ public class PopularMovies extends AppCompatActivity {
         adapter.addFragment(new PopularMoviesFragment(), getString(R.string.pref_page_type_highest_rated));
         //adapter.addFragment(new CheeseListFragment(), "Category 3");
         viewPager.setAdapter(adapter);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        menuItem.setChecked(true);
+                        mDrawerLayout.closeDrawers();
+                        return true;
+                    }
+                });
     }
 
 
