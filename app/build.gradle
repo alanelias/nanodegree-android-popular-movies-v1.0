@@ -59,4 +59,5 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:recyclerview-v7:+'
+    compile 'com.mostafagazar:customshapeimageview:1.0.+'
 }
